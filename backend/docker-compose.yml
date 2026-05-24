@@ -1,0 +1,53 @@
+services:
+  # --- MySQL Database ---
+  mysqldb:
+    image: mysql:8.0
+    container_name: mma-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${DB_NAME:-mma_db}
+      MYSQL_USER: ${DB_USER:-mma_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-mma_password}
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - mma-network
+
+  # --- Backend API ---
+  api:
+    build:
+      context: .
+      target: production
+    container_name: mma-api
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      PORT: 3000
+      NODE_ENV: ${NODE_ENV:-development}
+      DB_HOST: mysqldb
+      DB_PORT: 3306
+      DB_USER: ${DB_USER:-mma_user}
+      DB_PASSWORD: ${DB_PASSWORD:-mma_password}
+      DB_NAME: ${DB_NAME:-mma_db}
+      FIREBASE_SERVICE_ACCOUNT: ${FIREBASE_SERVICE_ACCOUNT:-'{}'}
+    depends_on:
+      mysqldb:
+        condition: service_healthy
+    networks:
+      - mma-network
+
+networks:
+  mma-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
