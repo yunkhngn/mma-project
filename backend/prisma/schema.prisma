@@ -9,9 +9,102 @@ generator client {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          Int       @id @default(autoincrement())
+  firebaseUid String    @unique @map("firebase_uid")
+  fullName    String    @map("full_name")
+  phone       String
+  email       String    @unique
+  role        String
+  createdAt   DateTime  @default(now()) @map("created_at")
+  bookings    Booking[]
+
+  @@map("users")
+}
+
+model Route {
+  id          Int    @id @default(autoincrement())
+  origin      String
+  destination String
+  distanceKm  Int    @map("distance_km")
+  trips       Trip[]
+
+  @@map("routes")
+}
+
+model Vehicle {
+  id         Int    @id @default(autoincrement())
+  name       String
+  totalSeats Int    @map("total_seats")
+  type       String
+  seatLayout Json   @map("seat_layout")
+  trips      Trip[]
+
+  @@map("vehicles")
+}
+
+model Trip {
+  id           Int      @id @default(autoincrement())
+  routeId      Int      @map("route_id")
+  vehicleId    Int      @map("vehicle_id")
+  departureAt  DateTime @map("departure_at")
+  price        Decimal  @db.Decimal(10, 2)
+  licensePlate String   @map("license_plate")
+  status       String
+
+  route    Route     @relation(fields: [routeId], references: [id])
+  vehicle  Vehicle   @relation(fields: [vehicleId], references: [id])
+  seats    Seat[]
+  bookings Booking[]
+
+  @@map("trips")
+}
+
+model Seat {
+  id          Int       @id @default(autoincrement())
+  tripId      Int       @map("trip_id")
+  seatNumber  Int       @map("seat_number")
+  status      String
+  bookingId   Int?      @unique @map("booking_id")
+  lockedUntil DateTime? @map("locked_until")
+
+  trip     Trip      @relation(fields: [tripId], references: [id])
+  booking  Booking?  @relation("SeatCurrentBooking", fields: [bookingId], references: [id])
+  bookings Booking[] @relation("BookingSeat")
+
+  @@map("seats")
+}
+
+model Booking {
+  id         Int      @id @default(autoincrement())
+  userId     Int      @map("user_id")
+  tripId     Int      @map("trip_id")
+  seatId     Int      @map("seat_id")
+  ticketCode String   @unique @map("ticket_code")
+  price      Decimal  @db.Decimal(10, 2)
+  status     String
+  qrData     String   @map("qr_data")
+  bookedAt   DateTime @default(now()) @map("booked_at")
+
+  user               User      @relation(fields: [userId], references: [id])
+  trip               Trip      @relation(fields: [tripId], references: [id])
+  seat               Seat      @relation("BookingSeat", fields: [seatId], references: [id])
+  seatCurrentBooking Seat?     @relation("SeatCurrentBooking")
+  payments           Payment[]
+
+  @@map("bookings")
+}
+
+model Payment {
+  id         Int       @id @default(autoincrement())
+  bookingId  Int       @map("booking_id")
+  method     String
+  gatewayRef String    @map("gateway_ref")
+  amount     Decimal   @db.Decimal(10, 2)
+  status     String
+  paidAt     DateTime? @map("paid_at")
+  expiresAt  DateTime? @map("expires_at")
+
+  booking Booking @relation(fields: [bookingId], references: [id])
+
+  @@map("payments")
 }
