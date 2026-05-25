@@ -23,3 +23,7 @@ docker-compose.override.yml
 # Logs
 *.log
 npm-debug.log*
+
+# Build outputs
+dist/
+*.tsbuildinfo
