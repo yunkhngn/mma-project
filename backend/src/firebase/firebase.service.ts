@@ -13,16 +13,24 @@ export class FirebaseService implements OnModuleInit {
     const serviceAccountStr = this.configService.firebaseServiceAccount;
     if (serviceAccountStr && serviceAccountStr !== '{}') {
       try {
-        const serviceAccount = JSON.parse(serviceAccountStr);
+        const serviceAccount = JSON.parse(
+          serviceAccountStr,
+        ) as admin.ServiceAccount;
         this.firebaseApp = admin.initializeApp({
           credential: admin.credential.cert(serviceAccount),
         });
         this.logger.log('✅ Firebase Admin SDK initialized successfully');
       } catch (error) {
-        this.logger.error('❌ Failed to initialize Firebase Admin SDK:', error.message);
+        const message = error instanceof Error ? error.message : String(error);
+        this.logger.error(
+          '❌ Failed to initialize Firebase Admin SDK:',
+          message,
+        );
       }
     } else {
-      this.logger.warn('⚠️  Firebase service account key not provided. Skipping initialization.');
+      this.logger.warn(
+        '⚠️  Firebase service account key not provided. Skipping initialization.',
+      );
     }
   }
 

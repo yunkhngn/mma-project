@@ -13,12 +13,19 @@ const app_service_1 = require("./app.service");
 const config_module_1 = require("./config/config.module");
 const prisma_module_1 = require("./prisma/prisma.module");
 const firebase_module_1 = require("./firebase/firebase.module");
+const users_module_1 = require("./users/users.module");
+const routes_module_1 = require("./routes/routes.module");
+const vehicles_module_1 = require("./vehicles/vehicles.module");
+const trips_module_1 = require("./trips/trips.module");
+const seats_module_1 = require("./seats/seats.module");
+const bookings_module_1 = require("./bookings/bookings.module");
+const payments_module_1 = require("./payments/payments.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [config_module_1.AppConfigModule, prisma_module_1.PrismaModule, firebase_module_1.FirebaseModule],
+        imports: [config_module_1.AppConfigModule, prisma_module_1.PrismaModule, firebase_module_1.FirebaseModule, users_module_1.UsersModule, routes_module_1.RoutesModule, vehicles_module_1.VehiclesModule, trips_module_1.TripsModule, seats_module_1.SeatsModule, bookings_module_1.BookingsModule, payments_module_1.PaymentsModule],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
     })

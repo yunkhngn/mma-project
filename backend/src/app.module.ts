@@ -13,7 +13,18 @@ import { BookingsModule } from './bookings/bookings.module';
 import { PaymentsModule } from './payments/payments.module';
 
 @Module({
-  imports: [AppConfigModule, PrismaModule, FirebaseModule, UsersModule, RoutesModule, VehiclesModule, TripsModule, SeatsModule, BookingsModule, PaymentsModule],
+  imports: [
+    AppConfigModule,
+    PrismaModule,
+    FirebaseModule,
+    UsersModule,
+    RoutesModule,
+    VehiclesModule,
+    TripsModule,
+    SeatsModule,
+    BookingsModule,
+    PaymentsModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
