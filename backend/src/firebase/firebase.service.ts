@@ -9,14 +9,14 @@ export class FirebaseService implements OnModuleInit {
   private readonly logger = new Logger(FirebaseService.name);
   private firebaseApp: admin.app.App;
 
-  constructor(private configService: AppConfigService) {}
+  constructor(private configService: AppConfigService) { }
 
   onModuleInit() {
     const serviceAccountStr = this.configService.firebaseServiceAccount;
     if (serviceAccountStr && serviceAccountStr !== '{}') {
       try {
         let serviceAccount: admin.ServiceAccount;
-        
+
         if (serviceAccountStr.trim().startsWith('{')) {
           serviceAccount = JSON.parse(
             serviceAccountStr,

@@ -49,7 +49,7 @@ describe('FirebaseService', () => {
   it('should initialize using raw JSON string if config starts with {', () => {
     const mockJson = '{"project_id": "test-project"}';
     jest.spyOn(configService, 'firebaseServiceAccount', 'get').mockReturnValue(mockJson);
-    
+
     service.onModuleInit();
 
     expect(admin.credential.cert).toHaveBeenCalledWith(JSON.parse(mockJson));
@@ -60,7 +60,7 @@ describe('FirebaseService', () => {
     const mockPath = './serviceAccountKey.json';
     const mockFileContent = '{"project_id": "file-project"}';
     jest.spyOn(configService, 'firebaseServiceAccount', 'get').mockReturnValue(mockPath);
-    
+
     (fs.existsSync as jest.Mock).mockReturnValue(true);
     (fs.readFileSync as jest.Mock).mockReturnValue(mockFileContent);
 
@@ -75,7 +75,7 @@ describe('FirebaseService', () => {
   it('should log an error if the configured file path does not exist', () => {
     const mockPath = './missingKey.json';
     jest.spyOn(configService, 'firebaseServiceAccount', 'get').mockReturnValue(mockPath);
-    
+
     (fs.existsSync as jest.Mock).mockReturnValue(false);
     const loggerSpy = jest.spyOn(service['logger'], 'error');
 
