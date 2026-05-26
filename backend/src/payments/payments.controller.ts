@@ -4,6 +4,7 @@ import {
   Param,
   ParseIntPipe,
   NotFoundException,
+  Post,
 } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { PaymentEntity } from './entities/payment.entity';
@@ -15,6 +16,11 @@ export class PaymentsController {
   @Get()
   async findAll(): Promise<PaymentEntity[]> {
     return this.paymentsService.findAll();
+  }
+
+  @Post(':id/confirm')
+  async confirm(@Param('id', ParseIntPipe) id: number): Promise<PaymentEntity> {
+    return this.paymentsService.confirmPayment(id);
   }
 
   @Get(':id')

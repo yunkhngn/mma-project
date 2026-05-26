@@ -4,9 +4,16 @@ import {
   Param,
   ParseIntPipe,
   NotFoundException,
+  Post,
+  UseGuards,
+  Body,
+  Request,
 } from '@nestjs/common';
 import { BookingsService } from './bookings.service';
 import { BookingEntity } from './entities/booking.entity';
+import { FirebaseAuthGuard } from '../auth/guards/firebase-auth.guard';
+import { Request as ExpressRequest } from 'express';
+import { User } from '@prisma/client';
 
 @Controller('bookings')
 export class BookingsController {
@@ -17,6 +24,24 @@ export class BookingsController {
     return this.bookingsService.findAll();
   }
 
+  @Post()
+  @UseGuards(FirebaseAuthGuard)
+  async create(
+    @Request() req: ExpressRequest & { user: User },
+    @Body()
+    body: { tripId: number; seatId: number; paymentMethod: 'cash' | 'vietqr' },
+  ): Promise<BookingEntity> {
+    return this.bookingsService.create(req.user.id, body);
+  }
+
+  @Get('my-history')
+  @UseGuards(FirebaseAuthGuard)
+  async getMyHistory(
+    @Request() req: ExpressRequest & { user: User },
+  ): Promise<BookingEntity[]> {
+    return this.bookingsService.myHistory(req.user.id);
+  }
+
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<BookingEntity> {
     const booking = await this.bookingsService.findOne(id);
@@ -24,5 +49,14 @@ export class BookingsController {
       throw new NotFoundException(`Booking with ID ${id} not found`);
     }
     return booking;
+  }
+
+  @Post(':id/cancel')
+  @UseGuards(FirebaseAuthGuard)
+  async cancel(
+    @Request() req: ExpressRequest & { user: User },
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<BookingEntity> {
+    return this.bookingsService.cancelBooking(req.user.id, id);
   }
 }

@@ -4,6 +4,7 @@ import {
   Param,
   ParseIntPipe,
   NotFoundException,
+  Query,
 } from '@nestjs/common';
 import { TripsService } from './trips.service';
 import { TripEntity } from './entities/trip.entity';
@@ -15,6 +16,15 @@ export class TripsController {
   @Get()
   async findAll(): Promise<TripEntity[]> {
     return this.tripsService.findAll();
+  }
+
+  @Get('search')
+  async search(
+    @Query('origin') origin: string,
+    @Query('destination') destination: string,
+    @Query('departureDate') departureDate: string,
+  ): Promise<TripEntity[]> {
+    return this.tripsService.searchTrips(origin, destination, departureDate);
   }
 
   @Get(':id')
