@@ -15,4 +15,19 @@ export class UsersService {
     const user = await this.prisma.user.findUnique({ where: { id } });
     return user ? new UserEntity(user) : null;
   }
+
+  async updateUser(
+    id: number,
+    data: { fullName?: string; phone?: string; avatar?: string },
+  ): Promise<UserEntity> {
+    const updatedUser = await this.prisma.user.update({
+      where: { id },
+      data: {
+        fullName: data.fullName,
+        phone: data.phone,
+        avatar: data.avatar,
+      },
+    });
+    return new UserEntity(updatedUser);
+  }
 }

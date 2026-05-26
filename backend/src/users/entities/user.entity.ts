@@ -5,6 +5,7 @@ export class UserEntity {
   phone: string;
   email: string;
   role: string;
+  avatar: string | null;
   createdAt: Date;
 
   constructor(partial: Partial<UserEntity>) {

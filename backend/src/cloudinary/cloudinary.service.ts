@@ -17,7 +17,7 @@ export class CloudinaryService {
       const upload = cloudinary.uploader.upload_stream(
         { folder: 'mma_avatars' },
         (error, result) => {
-          if (error) return reject(error);
+          if (error) return reject(new Error(error.message));
           if (result) return resolve(result.secure_url);
           reject(new Error('Upload failed with empty result'));
         },

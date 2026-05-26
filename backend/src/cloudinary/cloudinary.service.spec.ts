@@ -35,11 +35,15 @@ describe('CloudinaryService', () => {
 
   it('should successfully upload a file stream and return URL', async () => {
     const mockResult = { secure_url: 'https://cloudinary.com/avatar.jpg' };
-    const mockUploadStream = jest.fn((options, callback: (error: any, result: any) => void) => {
-      callback(null, mockResult);
-      return { end: jest.fn() };
-    });
-    (cloudinary.uploader.upload_stream as jest.Mock).mockImplementation(mockUploadStream);
+    const mockUploadStream = jest.fn(
+      (options, callback: (error: any, result: any) => void) => {
+        callback(null, mockResult);
+        return { end: jest.fn() };
+      },
+    );
+    (cloudinary.uploader.upload_stream as jest.Mock).mockImplementation(
+      mockUploadStream,
+    );
 
     const mockFile = {
       buffer: Buffer.from('test-image-content'),
