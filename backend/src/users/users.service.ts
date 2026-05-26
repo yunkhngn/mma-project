@@ -30,4 +30,12 @@ export class UsersService {
     });
     return new UserEntity(updatedUser);
   }
+
+  async updateFcmToken(id: number, fcmToken: string): Promise<UserEntity> {
+    const updatedUser = await this.prisma.user.update({
+      where: { id },
+      data: { fcmToken },
+    });
+    return new UserEntity(updatedUser);
+  }
 }

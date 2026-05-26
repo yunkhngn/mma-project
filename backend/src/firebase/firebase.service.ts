@@ -57,4 +57,66 @@ export class FirebaseService implements OnModuleInit {
   getApp() {
     return this.firebaseApp;
   }
+
+  async sendPushNotification(
+    token: string,
+    title: string,
+    body: string,
+    data?: Record<string, string>,
+  ): Promise<string | null> {
+    if (!this.firebaseApp) {
+      this.logger.warn(
+        'Firebase Admin SDK is not initialized. Cannot send notification.',
+      );
+      return null;
+    }
+    try {
+      const response = await this.firebaseApp.messaging().send({
+        token,
+        notification: {
+          title,
+          body,
+        },
+        data,
+      });
+      this.logger.log(`Successfully sent FCM message: ${response}`);
+      return response;
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : String(error);
+      this.logger.error(`Error sending FCM message to token ${token}:`, msg);
+      return null;
+    }
+  }
+
+  async sendToTopic(
+    topic: string,
+    title: string,
+    body: string,
+    data?: Record<string, string>,
+  ): Promise<string | null> {
+    if (!this.firebaseApp) {
+      this.logger.warn(
+        'Firebase Admin SDK is not initialized. Cannot send notification to topic.',
+      );
+      return null;
+    }
+    try {
+      const response = await this.firebaseApp.messaging().send({
+        topic,
+        notification: {
+          title,
+          body,
+        },
+        data,
+      });
+      this.logger.log(
+        `Successfully sent FCM message to topic ${topic}: ${response}`,
+      );
+      return response;
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : String(error);
+      this.logger.error(`Error sending FCM message to topic ${topic}:`, msg);
+      return null;
+    }
+  }
 }

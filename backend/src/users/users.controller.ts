@@ -61,4 +61,13 @@ export class UsersController {
       avatar: avatarUrl,
     });
   }
+
+  @Put('fcm-token')
+  @UseGuards(FirebaseAuthGuard)
+  async updateFcmToken(
+    @Request() req: ExpressRequest & { user: User },
+    @Body() body: { fcmToken: string },
+  ): Promise<UserEntity> {
+    return this.usersService.updateFcmToken(req.user.id, body.fcmToken);
+  }
 }

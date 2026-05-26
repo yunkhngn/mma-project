@@ -16,6 +16,7 @@ model User {
   email       String    @unique
   role        String
   avatar      String?
+  fcmToken    String?   @map("fcm_token")
   createdAt   DateTime  @default(now()) @map("created_at")
   bookings    Booking[]
 

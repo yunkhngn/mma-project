@@ -60,4 +60,31 @@ describe('UsersService', () => {
     expect(result.fullName).toBe('Updated Name');
     expect(result.avatar).toBe('https://cloudinary.com/avatar.jpg');
   });
+
+  it('should update fcm token successfully', async () => {
+    const mockUser = {
+      id: 1,
+      firebaseUid: 'uid-123',
+      fullName: 'Name',
+      phone: '0123',
+      email: 'test@example.com',
+      role: 'passenger',
+      avatar: null,
+      fcmToken: 'fcm-token-123',
+      createdAt: new Date(),
+    };
+
+    const updateMock = prisma.user.update as jest.Mock;
+    updateMock.mockResolvedValue(mockUser);
+
+    const result = await service.updateFcmToken(1, 'fcm-token-123');
+
+    expect(updateMock).toHaveBeenCalledWith({
+      where: { id: 1 },
+      data: {
+        fcmToken: 'fcm-token-123',
+      },
+    });
+    expect(result.fcmToken).toBe('fcm-token-123');
+  });
 });

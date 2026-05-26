@@ -1,5 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { FirebaseService } from '../firebase/firebase.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 export interface ChatMessage {
   id: string;
@@ -22,7 +23,10 @@ export interface Conversation {
 
 @Injectable()
 export class ChatService {
-  constructor(private readonly firebaseService: FirebaseService) {}
+  constructor(
+    private readonly firebaseService: FirebaseService,
+    private readonly prisma: PrismaService,
+  ) {}
 
   private getFirestore() {
     try {
@@ -123,6 +127,19 @@ export class ChatService {
       return Promise.resolve();
     });
 
+    // Send push notification to passenger if token is available
+    const user = await this.prisma.user.findUnique({
+      where: { firebaseUid: passengerId },
+    });
+    if (user && user.fcmToken) {
+      await this.firebaseService.sendPushNotification(
+        user.fcmToken,
+        'Tin nhắn mới từ Admin',
+        text,
+        { action: 'chat' },
+      );
+    }
+
     return { id: messageRef.id, ...message };
   }
 
@@ -163,6 +180,14 @@ export class ChatService {
       );
       return Promise.resolve();
     });
+
+    // Send push notification to all admins via topic
+    await this.firebaseService.sendToTopic(
+      'admins',
+      `Tin nhắn mới từ ${passengerName}`,
+      text,
+      { passengerId, action: 'chat' },
+    );
 
     return { id: messageRef.id, ...message };
   }

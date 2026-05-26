@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ChatService } from './chat.service';
 import { FirebaseService } from '../firebase/firebase.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 describe('ChatService', () => {
   let service: ChatService;
@@ -20,6 +21,14 @@ describe('ChatService', () => {
 
   const mockFirebaseService = {
     getAdmin: () => mockFirebaseAdmin,
+    sendPushNotification: jest.fn(),
+    sendToTopic: jest.fn(),
+  };
+
+  const mockPrisma = {
+    user: {
+      findUnique: jest.fn(),
+    },
   };
 
   beforeEach(async () => {
@@ -29,6 +38,10 @@ describe('ChatService', () => {
         {
           provide: FirebaseService,
           useValue: mockFirebaseService,
+        },
+        {
+          provide: PrismaService,
+          useValue: mockPrisma,
         },
       ],
     }).compile();
@@ -101,7 +114,7 @@ describe('ChatService', () => {
   });
 
   describe('sendMessageFromAdmin', () => {
-    it('should run transaction and return message', async () => {
+    it('should run transaction, query passenger, and send notification', async () => {
       mockFirestore.runTransaction.mockImplementation(
         (cb: (tx: unknown) => Promise<unknown>) => {
           return cb({
@@ -110,17 +123,32 @@ describe('ChatService', () => {
         },
       );
 
+      mockPrisma.user.findUnique.mockResolvedValue({
+        id: 1,
+        fcmToken: 'passenger-token',
+      });
+
       const result = await service.sendMessageFromAdmin(
         'user123',
         'Hello back',
       );
       expect(result.senderRole).toBe('admin');
       expect(result.text).toBe('Hello back');
+
+      expect(mockPrisma.user.findUnique).toHaveBeenCalledWith({
+        where: { firebaseUid: 'user123' },
+      });
+      expect(mockFirebaseService.sendPushNotification).toHaveBeenCalledWith(
+        'passenger-token',
+        'Tin nhắn mới từ Admin',
+        'Hello back',
+        { action: 'chat' },
+      );
     });
   });
 
   describe('sendMessageFromPassenger', () => {
-    it('should run transaction and return message', async () => {
+    it('should run transaction and send notification to topic', async () => {
       mockFirestore.runTransaction.mockImplementation(
         (cb: (tx: unknown) => Promise<unknown>) => {
           return cb({
@@ -137,6 +165,13 @@ describe('ChatService', () => {
       );
       expect(result.senderRole).toBe('passenger');
       expect(result.text).toBe('Help');
+
+      expect(mockFirebaseService.sendToTopic).toHaveBeenCalledWith(
+        'admins',
+        'Tin nhắn mới từ John Doe',
+        'Help',
+        { passengerId: 'user123', action: 'chat' },
+      );
     });
   });
 });
