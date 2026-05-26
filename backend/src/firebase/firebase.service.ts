@@ -1,6 +1,8 @@
 import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 import * as admin from 'firebase-admin';
 import { AppConfigService } from '../config/config.service';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class FirebaseService implements OnModuleInit {
@@ -13,9 +15,21 @@ export class FirebaseService implements OnModuleInit {
     const serviceAccountStr = this.configService.firebaseServiceAccount;
     if (serviceAccountStr && serviceAccountStr !== '{}') {
       try {
-        const serviceAccount = JSON.parse(
-          serviceAccountStr,
-        ) as admin.ServiceAccount;
+        let serviceAccount: admin.ServiceAccount;
+        
+        if (serviceAccountStr.trim().startsWith('{')) {
+          serviceAccount = JSON.parse(
+            serviceAccountStr,
+          ) as admin.ServiceAccount;
+        } else {
+          const resolvedPath = path.resolve(process.cwd(), serviceAccountStr);
+          if (!fs.existsSync(resolvedPath)) {
+            throw new Error(`Firebase credentials file not found at: ${resolvedPath}`);
+          }
+          const fileContent = fs.readFileSync(resolvedPath, 'utf8');
+          serviceAccount = JSON.parse(fileContent) as admin.ServiceAccount;
+        }
+
         this.firebaseApp = admin.initializeApp({
           credential: admin.credential.cert(serviceAccount),
         });
@@ -42,3 +56,4 @@ export class FirebaseService implements OnModuleInit {
     return this.firebaseApp;
   }
 }
+
