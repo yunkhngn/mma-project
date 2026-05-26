@@ -118,6 +118,10 @@ export class BookingsService {
       },
     });
 
+    if (!finalBooking) {
+      throw new NotFoundException('Booking not found');
+    }
+
     return new BookingEntity(finalBooking);
   }
 
@@ -287,6 +291,10 @@ export class BookingsService {
       },
     });
 
+    if (!finalBooking) {
+      throw new NotFoundException('Booking not found');
+    }
+
     return new BookingEntity(finalBooking);
   }
 
@@ -349,6 +357,10 @@ export class BookingsService {
         payments: true,
       },
     });
+
+    if (!finalBooking) {
+      throw new NotFoundException('Booking not found');
+    }
 
     return new BookingEntity(finalBooking);
   }

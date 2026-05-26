@@ -44,7 +44,11 @@ export class SeatsService {
     });
 
     if (seats.length === 0) {
-      const seatsData = [];
+      const seatsData: {
+        tripId: number;
+        seatNumber: number;
+        status: string;
+      }[] = [];
       for (let i = 1; i <= trip.vehicle.totalSeats; i++) {
         seatsData.push({
           tripId,
