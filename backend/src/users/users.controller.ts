@@ -18,7 +18,16 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { Request as ExpressRequest } from 'express';
 import { User } from '@prisma/client';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiConsumes,
+  ApiBody,
+} from '@nestjs/swagger';
 
+@ApiTags('Users')
 @Controller('users')
 export class UsersController {
   constructor(
@@ -27,11 +36,16 @@ export class UsersController {
   ) {}
 
   @Get()
+  @ApiOperation({ summary: 'Get all users' })
+  @ApiResponse({ status: 200, description: 'Return all users.' })
   async findAll(): Promise<UserEntity[]> {
     return this.usersService.findAll();
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get user by ID' })
+  @ApiResponse({ status: 200, description: 'Return user details.' })
+  @ApiResponse({ status: 404, description: 'User not found.' })
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<UserEntity> {
     const user = await this.usersService.findOne(id);
     if (!user) {
@@ -42,6 +56,20 @@ export class UsersController {
 
   @Put('profile')
   @UseGuards(FirebaseAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Update user profile (with avatar upload)' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        fullName: { type: 'string' },
+        phone: { type: 'string' },
+        avatar: { type: 'string', format: 'binary' },
+      },
+    },
+  })
+  @ApiResponse({ status: 200, description: 'Profile updated successfully.' })
   @UseInterceptors(FileInterceptor('avatar'))
   async updateProfile(
     @Request() req: ExpressRequest & { user: User },
@@ -64,6 +92,18 @@ export class UsersController {
 
   @Put('fcm-token')
   @UseGuards(FirebaseAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Update device FCM Token for notifications' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['fcmToken'],
+      properties: {
+        fcmToken: { type: 'string' },
+      },
+    },
+  })
+  @ApiResponse({ status: 200, description: 'FCM Token updated successfully.' })
   async updateFcmToken(
     @Request() req: ExpressRequest & { user: User },
     @Body() body: { fcmToken: string },
