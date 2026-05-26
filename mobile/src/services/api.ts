@@ -12,9 +12,9 @@ export async function apiFetch<T>(
   isMultipart = false
 ): Promise<T> {
   const url = `${BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
-  
+
   const headers = new Headers(options.headers || {});
-  
+
   if (!isMultipart && !headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json');
   }
