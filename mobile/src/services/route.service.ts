@@ -3,21 +3,21 @@ import { Route } from '../types';
 
 export const routeService = {
   /**
-   * Lấy danh sách tất cả các tuyến đường.
+   * Retrieves all routes.
    */
   async getAllRoutes(): Promise<Route[]> {
     return apiFetch<Route[]>('/routes');
   },
 
   /**
-   * Lấy chi tiết thông tin của một tuyến đường theo ID.
+   * Retrieves detailed route information by ID.
    */
   async getRouteById(id: number): Promise<Route> {
     return apiFetch<Route>(`/routes/${id}`);
   },
 
   /**
-   * Tạo tuyến đường mới (Chỉ dành cho Admin).
+   * Creates a new route (Admin only).
    */
   async createRoute(origin: string, destination: string, distanceKm: number): Promise<Route> {
     return apiFetch<Route>('/routes', {
@@ -27,7 +27,7 @@ export const routeService = {
   },
 
   /**
-   * Cập nhật thông tin tuyến đường (Chỉ dành cho Admin).
+   * Updates route details (Admin only).
    */
   async updateRoute(
     id: number,
@@ -40,7 +40,7 @@ export const routeService = {
   },
 
   /**
-   * Xóa tuyến đường (Chỉ dành cho Admin).
+   * Deletes a route (Admin only).
    */
   async deleteRoute(id: number): Promise<Route> {
     return apiFetch<Route>(`/routes/${id}`, {

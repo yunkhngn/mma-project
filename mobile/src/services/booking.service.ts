@@ -3,21 +3,21 @@ import { Booking } from '../types';
 
 export const bookingService = {
   /**
-   * Lấy toàn bộ danh sách đặt vé (Chỉ dành cho Admin).
+   * Retrieves all bookings (Admin only).
    */
   async getAllBookings(): Promise<Booking[]> {
     return apiFetch<Booking[]>('/bookings');
   },
 
   /**
-   * Lấy chi tiết thông tin vé đã đặt.
+   * Retrieves detailed booking information by ID.
    */
   async getBookingById(id: number): Promise<Booking> {
     return apiFetch<Booking>(`/bookings/${id}`);
   },
 
   /**
-   * Đặt vé xe mới.
+   * Creates a new ticket booking.
    */
   async createBooking(
     tripId: number,
@@ -31,14 +31,14 @@ export const bookingService = {
   },
 
   /**
-   * Lấy lịch sử đặt vé của hành khách hiện tại.
+   * Retrieves booking history for the currently logged-in passenger.
    */
   async getMyHistory(): Promise<Booking[]> {
     return apiFetch<Booking[]>('/bookings/my-history');
   },
 
   /**
-   * Hủy vé (Hành khách hủy vé của mình).
+   * Cancels a booking (Passenger cancels their own ticket).
    */
   async cancelBooking(id: number): Promise<Booking> {
     return apiFetch<Booking>(`/bookings/${id}/cancel`, {
@@ -47,7 +47,7 @@ export const bookingService = {
   },
 
   /**
-   * Cập nhật trạng thái/giá vé đặt (Chỉ dành cho Admin).
+   * Updates booking status or price (Admin only).
    */
   async updateBooking(
     id: number,
@@ -60,7 +60,7 @@ export const bookingService = {
   },
 
   /**
-   * Xóa đơn vé (Chỉ dành cho Admin).
+   * Deletes a booking record (Admin only).
    */
   async deleteBooking(id: number): Promise<Booking> {
     return apiFetch<Booking>(`/bookings/${id}`, {

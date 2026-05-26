@@ -5,7 +5,7 @@ import { ChatMessage, Conversation } from '../types';
 
 export const chatService = {
   /**
-   * Đăng ký lắng nghe thời gian thực (Real-time listener) tin nhắn của cuộc hội thoại.
+   * Subscribes to real-time updates for messages in a conversation.
    */
   subscribeToMessages(
     passengerId: string,
@@ -31,7 +31,7 @@ export const chatService = {
   },
 
   /**
-   * Đăng ký lắng nghe thời gian thực danh sách các cuộc hội thoại (Chỉ dành cho Admin).
+   * Subscribes to real-time updates for all active conversations (Admin only).
    */
   subscribeToConversations(callback: (conversations: Conversation[]) => void) {
     const convRef = collection(db, 'conversations');
@@ -55,7 +55,7 @@ export const chatService = {
   },
 
   /**
-   * Gửi tin nhắn từ hành khách lên hệ thống.
+   * Sends a message from the passenger.
    */
   async sendFromPassenger(text: string): Promise<any> {
     return apiFetch('/chat/passenger/send', {
@@ -65,7 +65,7 @@ export const chatService = {
   },
 
   /**
-   * Gửi tin nhắn từ Admin tới hành khách (Chỉ dành cho Admin).
+   * Sends a message from the admin to a specific passenger (Admin only).
    */
   async sendFromAdmin(passengerId: string, text: string): Promise<any> {
     return apiFetch('/chat/admin/send', {

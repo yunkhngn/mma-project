@@ -3,8 +3,8 @@ import { User } from '../types';
 
 export const authService = {
   /**
-   * Đồng bộ profile của người dùng sau khi đăng nhập Firebase thành công.
-   * Tạo bản ghi mới trong database của backend nếu người dùng chưa tồn tại.
+   * Syncs the user's profile after a successful Firebase login.
+   * Creates a new user record in the backend database if they do not exist yet.
    */
   async syncUser(): Promise<User> {
     return apiFetch<User>('/auth/sync', {
@@ -13,7 +13,7 @@ export const authService = {
   },
 
   /**
-   * Đăng nhập trang quản trị Admin và xác minh phân quyền admin.
+   * Authenticates the admin user and verifies administrative permissions.
    */
   async adminLogin(): Promise<User> {
     return apiFetch<User>('/auth/admin/login', {

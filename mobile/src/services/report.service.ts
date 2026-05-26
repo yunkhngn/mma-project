@@ -3,7 +3,7 @@ import { RevenueReport } from '../types';
 
 export const reportService = {
   /**
-   * Lấy báo cáo thống kê doanh thu và lượng vé bán ra (Chỉ dành cho Admin).
+   * Retrieves administrative revenue and sales reports (Admin only).
    */
   async getRevenueReport(filters?: {
     startDate?: string;

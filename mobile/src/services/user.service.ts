@@ -3,21 +3,21 @@ import { User } from '../types';
 
 export const userService = {
   /**
-   * Lấy danh sách toàn bộ người dùng.
+   * Retrieves a list of all users.
    */
   async getAllUsers(): Promise<User[]> {
     return apiFetch<User[]>('/users');
   },
 
   /**
-   * Lấy chi tiết thông tin người dùng theo ID.
+   * Retrieves detailed user information by ID.
    */
   async getUserById(id: number): Promise<User> {
     return apiFetch<User>(`/users/${id}`);
   },
 
   /**
-   * Cập nhật thông tin cá nhân của người dùng hiện tại (hỗ trợ upload ảnh đại diện).
+   * Updates the current user's profile information (supports avatar upload).
    */
   async updateProfile(
     fullName?: string,
@@ -33,7 +33,7 @@ export const userService = {
       const match = /\.(\w+)$/.exec(filename);
       const type = match ? `image/${match[1]}` : `image/jpeg`;
       
-      // Định dạng File object tương thích với React Native FormData
+      // Format file object to be compatible with React Native FormData
       formData.append('avatar', {
         uri: avatarUri,
         name: filename,
@@ -44,11 +44,11 @@ export const userService = {
     return apiFetch<User>('/users/profile', {
       method: 'PUT',
       body: formData,
-    }, true); // Đánh dấu isMultipart = true để tự động bỏ Content-Type
+    }, true); // Mark isMultipart = true to automatically omit Content-Type header
   },
 
   /**
-   * Cập nhật FCM token phục vụ cho việc gửi thông báo đẩy.
+   * Updates the FCM token for push notifications.
    */
   async updateFcmToken(fcmToken: string): Promise<User> {
     return apiFetch<User>('/users/fcm-token', {

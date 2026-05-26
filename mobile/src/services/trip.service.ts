@@ -3,21 +3,21 @@ import { Trip } from '../types';
 
 export const tripService = {
   /**
-   * Lấy danh sách tất cả chuyến xe.
+   * Retrieves all trips.
    */
   async getAllTrips(): Promise<Trip[]> {
     return apiFetch<Trip[]>('/trips');
   },
 
   /**
-   * Lấy chi tiết chuyến xe theo ID.
+   * Retrieves detailed trip information by ID.
    */
   async getTripById(id: number): Promise<Trip> {
     return apiFetch<Trip>(`/trips/${id}`);
   },
 
   /**
-   * Tìm kiếm chuyến xe lọc theo điểm đi, điểm đến và ngày đi.
+   * Searches for trips based on origin, destination, and departure date.
    */
   async searchTrips(
     origin: string,
@@ -33,7 +33,7 @@ export const tripService = {
   },
 
   /**
-   * Tạo chuyến xe mới (Chỉ dành cho Admin).
+   * Creates a new trip (Admin only).
    */
   async createTrip(data: {
     routeId: number;
@@ -50,7 +50,7 @@ export const tripService = {
   },
 
   /**
-   * Cập nhật thông tin chuyến xe (Chỉ dành cho Admin).
+   * Updates trip details (Admin only).
    */
   async updateTrip(
     id: number,
@@ -70,7 +70,7 @@ export const tripService = {
   },
 
   /**
-   * Xóa chuyến xe (Chỉ dành cho Admin).
+   * Deletes a trip (Admin only).
    */
   async deleteTrip(id: number): Promise<Trip> {
     return apiFetch<Trip>(`/trips/${id}`, {

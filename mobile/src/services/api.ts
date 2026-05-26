@@ -3,8 +3,8 @@ import { auth } from './firebase';
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000/api';
 
 /**
- * Trình bọc Fetch API chung để kết nối với Backend.
- * Tự động chèn Firebase ID Token vào Authorization header nếu người dùng đã đăng nhập.
+ * Generic Fetch API wrapper to connect with the Backend.
+ * Automatically injects Firebase ID Token into the Authorization header if the user is logged in.
  */
 export async function apiFetch<T>(
   endpoint: string,
@@ -19,14 +19,14 @@ export async function apiFetch<T>(
     headers.set('Content-Type', 'application/json');
   }
 
-  // Tự động đính kèm Firebase ID Token nếu có người dùng đang đăng nhập
+  // Automatically attach Firebase ID Token if a user is logged in
   const currentUser = auth.currentUser;
   if (currentUser) {
     try {
       const token = await currentUser.getIdToken();
       headers.set('Authorization', `Bearer ${token}`);
     } catch (error) {
-      console.warn('Không thể lấy Firebase ID Token:', error);
+      console.warn('Failed to get Firebase ID Token:', error);
     }
   }
 
@@ -38,12 +38,12 @@ export async function apiFetch<T>(
   const response = await fetch(url, config);
 
   if (!response.ok) {
-    let errorMessage = `Lỗi kết nối API: ${response.status} ${response.statusText}`;
+    let errorMessage = `API connection error: ${response.status} ${response.statusText}`;
     try {
       const errorData = await response.json();
       errorMessage = errorData.message || errorMessage;
     } catch (_) {
-      // Bỏ qua nếu không parse được JSON lỗi từ backend
+      // Ignore if error JSON from backend cannot be parsed
     }
     throw new Error(errorMessage);
   }
