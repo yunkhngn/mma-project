@@ -50,4 +50,14 @@ describe('AuthController', () => {
     });
     expect(result).toEqual(mockUser);
   });
+
+  describe('adminLogin', () => {
+    it('should return request.user if user is admin', () => {
+      const adminUser: User = { ...mockUser, role: 'admin' };
+      const result = controller.adminLogin({
+        user: adminUser,
+      } as unknown as Request & { user: User });
+      expect(result).toEqual(adminUser);
+    });
+  });
 });

@@ -9,7 +9,7 @@ import { Seat } from '@prisma/client';
 
 @Injectable()
 export class BookingsService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async findAll(): Promise<BookingEntity[]> {
     const bookings = await this.prisma.booking.findMany({
