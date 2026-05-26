@@ -19,7 +19,9 @@ https://docs.expo.dev/versions/v56.0.0/
 | Framework | React Native + Expo SDK 56 |
 | Navigation | Expo Router (file-based, lives in `src/app/`) |
 | Language | TypeScript (strict mode) |
-| Styling | StyleSheet API (no Tailwind, no styled-components) |
+| Styling | **NativeWind v4** (Tailwind CSS for React Native) |
+| UI Components | **react-native-reusables** (shadcn/ui for React Native) — lives in `src/components/ui/` |
+| Icons | **lucide-react-native** |
 | State | Zustand (`src/store/`) |
 | Auth | Firebase Authentication (JS SDK v9+) |
 | Realtime | Firestore (`onSnapshot` listeners) |
