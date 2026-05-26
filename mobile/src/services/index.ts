@@ -7,3 +7,4 @@ export * from './trip.service';
 export * from './booking.service';
 export * from './chat.service';
 export * from './report.service';
+export * from './notification.service';
