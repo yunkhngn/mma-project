@@ -1,13 +1,20 @@
 import {
   Controller,
   Get,
+  Post,
+  Put,
+  Delete,
   Param,
   ParseIntPipe,
   NotFoundException,
   Query,
+  UseGuards,
+  Body,
 } from '@nestjs/common';
 import { TripsService } from './trips.service';
 import { TripEntity } from './entities/trip.entity';
+import { FirebaseAuthGuard } from '../auth/guards/firebase-auth.guard';
+import { AdminGuard } from '../auth/guards/admin.guard';
 
 @Controller('trips')
 export class TripsController {
@@ -16,6 +23,22 @@ export class TripsController {
   @Get()
   async findAll(): Promise<TripEntity[]> {
     return this.tripsService.findAll();
+  }
+
+  @Post()
+  @UseGuards(FirebaseAuthGuard, AdminGuard)
+  async create(
+    @Body()
+    body: {
+      routeId: number;
+      vehicleId: number;
+      departureAt: string;
+      price: number;
+      licensePlate: string;
+      status?: string;
+    },
+  ): Promise<TripEntity> {
+    return this.tripsService.create(body);
   }
 
   @Get('search')
@@ -34,5 +57,28 @@ export class TripsController {
       throw new NotFoundException(`Trip with ID ${id} not found`);
     }
     return trip;
+  }
+
+  @Put(':id')
+  @UseGuards(FirebaseAuthGuard, AdminGuard)
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body()
+    body: {
+      routeId?: number;
+      vehicleId?: number;
+      departureAt?: string;
+      price?: number;
+      licensePlate?: string;
+      status?: string;
+    },
+  ): Promise<TripEntity> {
+    return this.tripsService.update(id, body);
+  }
+
+  @Delete(':id')
+  @UseGuards(FirebaseAuthGuard, AdminGuard)
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<TripEntity> {
+    return this.tripsService.remove(id);
   }
 }
