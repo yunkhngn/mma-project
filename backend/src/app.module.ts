@@ -13,6 +13,7 @@ import { BookingsModule } from './bookings/bookings.module';
 import { PaymentsModule } from './payments/payments.module';
 import { AuthModule } from './auth/auth.module';
 import { ReportsModule } from './reports/reports.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ReportsModule } from './reports/reports.module';
     PaymentsModule,
     AuthModule,
     ReportsModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService],
