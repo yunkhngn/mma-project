@@ -15,7 +15,8 @@ export class AuthService {
         .getAdmin()
         .auth()
         .verifyIdToken(token);
-      const { uid, email, name } = decodedToken;
+      const { uid, email } = decodedToken;
+      const name = decodedToken.name as string | undefined;
 
       if (!email) {
         throw new UnauthorizedException('Email is required from Firebase Auth');
@@ -38,10 +39,9 @@ export class AuthService {
       }
 
       return user;
-    } catch (error) {
-      throw new UnauthorizedException(
-        error instanceof Error ? error.message : 'Invalid Firebase token',
-      );
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      throw new UnauthorizedException(message);
     }
   }
 }

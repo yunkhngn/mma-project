@@ -3,17 +3,20 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { FirebaseAuthGuard } from './guards/firebase-auth.guard';
 import { ExecutionContext } from '@nestjs/common';
+import { Request } from 'express';
+import { User } from '@prisma/client';
 
 describe('AuthController', () => {
   let controller: AuthController;
 
-  const mockUser = {
+  const mockUser: User = {
     id: 1,
     firebaseUid: 'uid-123',
     email: 'test@example.com',
     fullName: 'Test User',
     phone: '',
     role: 'passenger',
+    createdAt: new Date(),
   };
 
   beforeEach(async () => {
@@ -29,7 +32,9 @@ describe('AuthController', () => {
       .overrideGuard(FirebaseAuthGuard)
       .useValue({
         canActivate: (context: ExecutionContext) => {
-          const req = context.switchToHttp().getRequest();
+          const req = context
+            .switchToHttp()
+            .getRequest<Request & { user?: User }>();
           req.user = mockUser;
           return true;
         },
@@ -39,8 +44,10 @@ describe('AuthController', () => {
     controller = module.get<AuthController>(AuthController);
   });
 
-  it('should return request.user from syncUser endpoint', async () => {
-    const result = await controller.syncUser({ user: mockUser });
+  it('should return request.user from syncUser endpoint', () => {
+    const result = controller.syncUser({ user: mockUser } as Request & {
+      user: User;
+    });
     expect(result).toEqual(mockUser);
   });
 });

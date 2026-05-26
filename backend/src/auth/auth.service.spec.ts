@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { FirebaseService } from '../firebase/firebase.service';
@@ -7,7 +8,6 @@ import { UnauthorizedException } from '@nestjs/common';
 describe('AuthService', () => {
   let service: AuthService;
   let prisma: PrismaService;
-  let firebaseService: FirebaseService;
 
   const mockVerifyIdToken = jest.fn();
   const mockAuth = jest.fn(() => ({
@@ -41,7 +41,6 @@ describe('AuthService', () => {
 
     service = module.get<AuthService>(AuthService);
     prisma = module.get<PrismaService>(PrismaService);
-    firebaseService = module.get<FirebaseService>(FirebaseService);
     jest.clearAllMocks();
   });
 
@@ -72,14 +71,17 @@ describe('AuthService', () => {
       role: 'passenger',
     };
 
-    (prisma.user.findUnique as jest.Mock).mockResolvedValue(mockDbUser);
+    const findUniqueMock = prisma.user.findUnique as jest.Mock;
+    const createMock = prisma.user.create as jest.Mock;
+
+    findUniqueMock.mockResolvedValue(mockDbUser);
 
     const result = await service.validateAndSyncUser('valid-token');
 
-    expect(prisma.user.findUnique).toHaveBeenCalledWith({
+    expect(findUniqueMock).toHaveBeenCalledWith({
       where: { firebaseUid: 'existing-uid' },
     });
-    expect(prisma.user.create).not.toHaveBeenCalled();
+    expect(createMock).not.toHaveBeenCalled();
     expect(result).toEqual(mockDbUser);
   });
 
@@ -99,15 +101,18 @@ describe('AuthService', () => {
       role: 'passenger',
     };
 
-    (prisma.user.findUnique as jest.Mock).mockResolvedValue(null);
-    (prisma.user.create as jest.Mock).mockResolvedValue(mockNewDbUser);
+    const findUniqueMock = prisma.user.findUnique as jest.Mock;
+    const createMock = prisma.user.create as jest.Mock;
+
+    findUniqueMock.mockResolvedValue(null);
+    createMock.mockResolvedValue(mockNewDbUser);
 
     const result = await service.validateAndSyncUser('valid-token');
 
-    expect(prisma.user.findUnique).toHaveBeenCalledWith({
+    expect(findUniqueMock).toHaveBeenCalledWith({
       where: { firebaseUid: 'new-uid' },
     });
-    expect(prisma.user.create).toHaveBeenCalledWith({
+    expect(createMock).toHaveBeenCalledWith({
       data: {
         firebaseUid: 'new-uid',
         email: 'new@example.com',
