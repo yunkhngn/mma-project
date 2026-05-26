@@ -14,7 +14,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -30,6 +30,8 @@ services:
     restart: unless-stopped
     ports:
       - "${PORT:-3000}:3000"
+    volumes:
+      - ./serviceAccountKey.json:/app/serviceAccountKey.json
     environment:
       PORT: 3000
       NODE_ENV: ${NODE_ENV:-development}
