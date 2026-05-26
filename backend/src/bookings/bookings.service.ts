@@ -66,8 +66,8 @@ export class BookingsService {
         qrData = `https://img.vietqr.io/image/MB-0938671672-compact2.png?amount=${trip.price.toString()}&addInfo=${ticketCode}`;
       }
 
-      // 6. Determine booking status
-      const bookingStatus = paymentMethod === 'cash' ? 'confirmed' : 'pending';
+      // 6. Determine booking status (Hardcoded success for now)
+      const bookingStatus = 'confirmed';
 
       // 7. Create booking
       const newBooking = await tx.booking.create({
@@ -82,7 +82,7 @@ export class BookingsService {
         },
       });
 
-      // 8. Create payment record
+      // 8. Create payment record (Hardcoded success for now)
       const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes expiration
       await tx.payment.create({
         data: {
@@ -90,8 +90,9 @@ export class BookingsService {
           method: paymentMethod,
           gatewayRef: `REF-${newBooking.id}-${Date.now()}`,
           amount: trip.price,
-          status: 'pending',
+          status: 'paid',
           expiresAt,
+          paidAt: new Date(),
         },
       });
 
