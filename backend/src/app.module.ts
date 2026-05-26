@@ -12,6 +12,7 @@ import { SeatsModule } from './seats/seats.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { PaymentsModule } from './payments/payments.module';
 import { AuthModule } from './auth/auth.module';
+import { ReportsModule } from './reports/reports.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { AuthModule } from './auth/auth.module';
     BookingsModule,
     PaymentsModule,
     AuthModule,
+    ReportsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
