@@ -79,7 +79,7 @@ describe('PaymentsService', () => {
       (prisma.payment.findUnique as jest.Mock).mockResolvedValue(mockPayment);
       (prisma.$transaction as jest.Mock).mockImplementation(
         async (cb: (tx: unknown) => Promise<unknown>) => {
-          return (await cb(prisma)) as unknown;
+          return await cb(prisma);
         },
       );
       (prisma.payment.update as jest.Mock).mockResolvedValue({
