@@ -9,7 +9,7 @@ export class FirebaseService implements OnModuleInit {
   private readonly logger = new Logger(FirebaseService.name);
   private firebaseApp: admin.app.App;
 
-  constructor(private configService: AppConfigService) { }
+  constructor(private configService: AppConfigService) {}
 
   onModuleInit() {
     const serviceAccountStr = this.configService.firebaseServiceAccount;
@@ -24,7 +24,9 @@ export class FirebaseService implements OnModuleInit {
         } else {
           const resolvedPath = path.resolve(process.cwd(), serviceAccountStr);
           if (!fs.existsSync(resolvedPath)) {
-            throw new Error(`Firebase credentials file not found at: ${resolvedPath}`);
+            throw new Error(
+              `Firebase credentials file not found at: ${resolvedPath}`,
+            );
           }
           const fileContent = fs.readFileSync(resolvedPath, 'utf8');
           serviceAccount = JSON.parse(fileContent) as admin.ServiceAccount;
@@ -56,4 +58,3 @@ export class FirebaseService implements OnModuleInit {
     return this.firebaseApp;
   }
 }
-
