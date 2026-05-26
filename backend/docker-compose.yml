@@ -25,12 +25,14 @@ services:
   api:
     build:
       context: .
-      target: production
+      target: development
     container_name: mma-api
     restart: unless-stopped
     ports:
       - "${PORT:-3000}:3000"
     volumes:
+      - .:/app
+      - /app/node_modules
       - ./serviceAccountKey.json:/app/serviceAccountKey.json
     environment:
       PORT: 3000
