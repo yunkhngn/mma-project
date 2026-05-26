@@ -14,6 +14,7 @@ import {
 import { UsersService } from './users.service';
 import { UserEntity } from './entities/user.entity';
 import { FirebaseAuthGuard } from '../auth/guards/firebase-auth.guard';
+import { AdminGuard } from '../auth/guards/admin.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { Request as ExpressRequest } from 'express';
@@ -36,14 +37,18 @@ export class UsersController {
   ) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get all users' })
+  @UseGuards(FirebaseAuthGuard, AdminGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Get all users (Admin only)' })
   @ApiResponse({ status: 200, description: 'Return all users.' })
   async findAll(): Promise<UserEntity[]> {
     return this.usersService.findAll();
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get user by ID' })
+  @UseGuards(FirebaseAuthGuard, AdminGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Get user by ID (Admin only)' })
   @ApiResponse({ status: 200, description: 'Return user details.' })
   @ApiResponse({ status: 404, description: 'User not found.' })
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<UserEntity> {

@@ -3,14 +3,14 @@ import { User } from '../types';
 
 export const userService = {
   /**
-   * Retrieves a list of all users.
+   * Retrieves a list of all users (Admin only).
    */
   async getAllUsers(): Promise<User[]> {
     return apiFetch<User[]>('/users');
   },
 
   /**
-   * Retrieves detailed user information by ID.
+   * Retrieves detailed user information by ID (Admin only).
    */
   async getUserById(id: number): Promise<User> {
     return apiFetch<User>(`/users/${id}`);

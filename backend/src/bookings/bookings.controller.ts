@@ -81,6 +81,8 @@ export class BookingsController {
   }
 
   @Get(':id')
+  @UseGuards(FirebaseAuthGuard)
+  @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Get booking details by ID' })
   @ApiResponse({ status: 200, description: 'Return booking details.' })
   @ApiResponse({ status: 404, description: 'Booking not found.' })
