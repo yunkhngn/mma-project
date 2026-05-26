@@ -15,12 +15,14 @@ describe('BookingsService', () => {
       findUnique: jest.fn(),
       create: jest.fn(),
       update: jest.fn(),
+      delete: jest.fn(),
     },
     payment: {
       findMany: jest.fn(),
       create: jest.fn(),
       update: jest.fn(),
       updateMany: jest.fn(),
+      deleteMany: jest.fn(),
     },
     seat: {
       findUnique: jest.fn(),
@@ -175,6 +177,86 @@ describe('BookingsService', () => {
         data: { status: 'available', bookingId: null },
       });
       expect(result.status).toBe('cancelled');
+    });
+  });
+
+  describe('update', () => {
+    it('should throw NotFoundException if booking does not exist', async () => {
+      (prisma.booking.findUnique as jest.Mock).mockResolvedValue(null);
+
+      await expect(service.update(99, { status: 'confirmed' })).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+
+    it('should update status and sync seat status successfully', async () => {
+      const mockBooking = {
+        id: 1,
+        status: 'pending',
+        seatId: 5,
+      };
+
+      (prisma.booking.findUnique as jest.Mock)
+        .mockResolvedValueOnce(mockBooking)
+        .mockResolvedValueOnce({ ...mockBooking, status: 'confirmed' });
+
+      (prisma.$transaction as jest.Mock).mockImplementation(
+        async (cb: (tx: unknown) => Promise<unknown>) => {
+          return await cb(prisma);
+        },
+      );
+
+      (prisma.booking.update as jest.Mock).mockResolvedValue({
+        ...mockBooking,
+        status: 'confirmed',
+      });
+
+      const result = await service.update(1, { status: 'confirmed' });
+
+      expect(prisma.booking.update).toHaveBeenCalledWith({
+        where: { id: 1 },
+        data: { status: 'confirmed' },
+      });
+      expect(prisma.seat.update).toHaveBeenCalledWith({
+        where: { id: 5 },
+        data: { status: 'booked' },
+      });
+      expect(result.status).toBe('confirmed');
+    });
+  });
+
+  describe('remove', () => {
+    it('should throw NotFoundException if booking does not exist', async () => {
+      (prisma.booking.findUnique as jest.Mock).mockResolvedValue(null);
+
+      await expect(service.remove(99)).rejects.toThrow(NotFoundException);
+    });
+
+    it('should remove booking and free seat', async () => {
+      const mockBooking = {
+        id: 1,
+        seatId: 5,
+      };
+
+      (prisma.booking.findUnique as jest.Mock).mockResolvedValue(mockBooking);
+      (prisma.$transaction as jest.Mock).mockImplementation(
+        async (cb: (tx: unknown) => Promise<unknown>) => {
+          return await cb(prisma);
+        },
+      );
+
+      await service.remove(1);
+
+      expect(prisma.seat.update).toHaveBeenCalledWith({
+        where: { id: 5 },
+        data: { status: 'available', bookingId: null },
+      });
+      expect(prisma.payment.deleteMany).toHaveBeenCalledWith({
+        where: { bookingId: 1 },
+      });
+      expect(prisma.booking.delete).toHaveBeenCalledWith({
+        where: { id: 1 },
+      });
     });
   });
 });

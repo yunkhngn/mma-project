@@ -5,6 +5,8 @@ import {
   ParseIntPipe,
   NotFoundException,
   Post,
+  Put,
+  Delete,
   UseGuards,
   Body,
   Request,
@@ -12,6 +14,7 @@ import {
 import { BookingsService } from './bookings.service';
 import { BookingEntity } from './entities/booking.entity';
 import { FirebaseAuthGuard } from '../auth/guards/firebase-auth.guard';
+import { AdminGuard } from '../auth/guards/admin.guard';
 import { Request as ExpressRequest } from 'express';
 import { User } from '@prisma/client';
 
@@ -20,6 +23,7 @@ export class BookingsController {
   constructor(private readonly bookingsService: BookingsService) {}
 
   @Get()
+  @UseGuards(FirebaseAuthGuard, AdminGuard)
   async findAll(): Promise<BookingEntity[]> {
     return this.bookingsService.findAll();
   }
@@ -49,6 +53,25 @@ export class BookingsController {
       throw new NotFoundException(`Booking with ID ${id} not found`);
     }
     return booking;
+  }
+
+  @Put(':id')
+  @UseGuards(FirebaseAuthGuard, AdminGuard)
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body()
+    body: {
+      status?: 'pending' | 'confirmed' | 'cancelled';
+      price?: number;
+    },
+  ): Promise<BookingEntity> {
+    return this.bookingsService.update(id, body);
+  }
+
+  @Delete(':id')
+  @UseGuards(FirebaseAuthGuard, AdminGuard)
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<BookingEntity> {
+    return this.bookingsService.remove(id);
   }
 
   @Post(':id/cancel')

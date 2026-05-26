@@ -289,4 +289,93 @@ export class BookingsService {
 
     return new BookingEntity(finalBooking);
   }
+
+  async update(
+    id: number,
+    data: {
+      status?: 'pending' | 'confirmed' | 'cancelled';
+      price?: number;
+    },
+  ): Promise<BookingEntity> {
+    const existing = await this.prisma.booking.findUnique({
+      where: { id },
+      include: { seat: true },
+    });
+    if (!existing) {
+      throw new NotFoundException(`Booking with ID ${id} not found`);
+    }
+
+    const updated = await this.prisma.$transaction(async (tx) => {
+      const result = await tx.booking.update({
+        where: { id },
+        data,
+      });
+
+      if (
+        data.status === 'cancelled' &&
+        existing.status !== 'cancelled' &&
+        existing.seatId
+      ) {
+        await tx.seat.update({
+          where: { id: existing.seatId },
+          data: {
+            status: 'available',
+            bookingId: null,
+          },
+        });
+      }
+
+      if (
+        data.status === 'confirmed' &&
+        existing.status !== 'confirmed' &&
+        existing.seatId
+      ) {
+        await tx.seat.update({
+          where: { id: existing.seatId },
+          data: {
+            status: 'booked',
+          },
+        });
+      }
+
+      return result;
+    });
+
+    const finalBooking = await this.prisma.booking.findUnique({
+      where: { id: updated.id },
+      include: {
+        trip: { include: { route: true, vehicle: true } },
+        seat: true,
+        payments: true,
+      },
+    });
+
+    return new BookingEntity(finalBooking);
+  }
+
+  async remove(id: number): Promise<BookingEntity> {
+    const existing = await this.prisma.booking.findUnique({
+      where: { id },
+    });
+    if (!existing) {
+      throw new NotFoundException(`Booking with ID ${id} not found`);
+    }
+
+    await this.prisma.$transaction(async (tx) => {
+      if (existing.seatId) {
+        await tx.seat.update({
+          where: { id: existing.seatId },
+          data: {
+            status: 'available',
+            bookingId: null,
+          },
+        });
+      }
+
+      await tx.payment.deleteMany({ where: { bookingId: id } });
+      await tx.booking.delete({ where: { id } });
+    });
+
+    return new BookingEntity(existing);
+  }
 }
