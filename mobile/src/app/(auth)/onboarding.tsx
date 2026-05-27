@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Image, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ActivityIndicator, Alert, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Mail } from 'lucide-react-native';
 import { useAuth } from '@/context/auth-context';
@@ -9,12 +9,23 @@ export default function OnboardingScreen() {
   const { loginWithGoogle } = useAuth();
   const [loading, setLoading] = useState(false);
 
+  const showAlert = (title: string, message: string) => {
+    if (Platform.OS === 'web') {
+      alert(`${title}: ${message}`);
+    } else {
+      Alert.alert(title, message);
+    }
+  };
+
   const handleGoogleLogin = async () => {
     setLoading(true);
     try {
+      console.log('Initiating Google Sign-In on Onboarding...');
       await loginWithGoogle();
+      console.log('Google Sign-In successful on Onboarding.');
     } catch (error: any) {
-      Alert.alert('Đăng nhập thất bại', error.message || 'Đã xảy ra lỗi khi đăng nhập bằng Google.');
+      console.error('Google Login Error on Onboarding:', error);
+      showAlert('Đăng nhập thất bại', error.message || 'Đã xảy ra lỗi khi đăng nhập bằng Google.');
     } finally {
       setLoading(false);
     }

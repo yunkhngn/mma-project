@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Image, TextInput, TouchableOpacity, Alert, ActivityIndicator, ScrollView, Dimensions } from 'react-native';
+import { View, Text, Image, TextInput, TouchableOpacity, Alert, ActivityIndicator, ScrollView, Dimensions, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Eye, EyeOff, ArrowLeft } from 'lucide-react-native';
 import { useAuth } from '@/context/auth-context';
@@ -19,16 +19,25 @@ export default function LoginScreen() {
   const [submitting, setSubmitting] = useState(false);
   const [googleSubmitting, setGoogleSubmitting] = useState(false);
 
+  const showAlert = (title: string, message: string) => {
+    if (Platform.OS === 'web') {
+      alert(`${title}: ${message}`);
+    } else {
+      Alert.alert(title, message);
+    }
+  };
+
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert('Lỗi', 'Vui lòng điền đầy đủ email và mật khẩu');
+      showAlert('Lỗi', 'Vui lòng điền đầy đủ email và mật khẩu');
       return;
     }
     setSubmitting(true);
     try {
       await login(email.trim(), password, role);
     } catch (error: any) {
-      Alert.alert('Đăng nhập thất bại', error.message || 'Đã xảy ra lỗi vui lòng thử lại.');
+      console.error('Email Login Error:', error);
+      showAlert('Đăng nhập thất bại', error.message || 'Đã xảy ra lỗi vui lòng thử lại.');
     } finally {
       setSubmitting(false);
     }
@@ -37,9 +46,12 @@ export default function LoginScreen() {
   const handleGoogleLogin = async () => {
     setGoogleSubmitting(true);
     try {
+      console.log('Initiating Google Sign-In...');
       await loginWithGoogle();
+      console.log('Google Sign-In successful.');
     } catch (error: any) {
-      Alert.alert('Đăng nhập thất bại', error.message || 'Đã xảy ra lỗi vui lòng thử lại.');
+      console.error('Google Login Error:', error);
+      showAlert('Đăng nhập thất bại', error.message || 'Đã xảy ra lỗi vui lòng thử lại.');
     } finally {
       setGoogleSubmitting(false);
     }
