@@ -46,8 +46,9 @@ export default function PassengerHome() {
     setTo(prev);
   };
 
-  const initials = user?.fullName?.split(' ').at(-1)?.[0]?.toUpperCase() ?? 'U';
-  const displayName = user?.fullName?.split(' ').at(-1) ?? 'bạn';
+  const firstName = user?.fullName?.split(' ')[0] ?? 'bạn';
+  const initials = firstName[0]?.toUpperCase() ?? 'U';
+  const displayName = firstName;
   // Prefer backend avatar, then Firebase Google photo, then initials
   const avatarUri = user?.avatar ?? firebaseUser?.photoURL ?? null;
 
