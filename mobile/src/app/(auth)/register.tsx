@@ -5,6 +5,7 @@ import { Eye, EyeOff, ArrowLeft } from 'lucide-react-native';
 import { useAuth } from '@/context/auth-context';
 
 import { useToast } from '@/context/toast-context';
+import { parseError } from '@/utils/error-parser';
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const IMAGE_HEIGHT = Math.round(SCREEN_HEIGHT * 0.5);
@@ -45,7 +46,7 @@ export default function RegisterScreen() {
       showSuccess('Tạo tài khoản thành công!');
     } catch (error: any) {
       console.error('Email Registration Error:', error);
-      showError(error.message || 'Đăng ký thất bại. Vui lòng thử lại.');
+      showError(parseError(error));
     } finally {
       setSubmitting(false);
     }
@@ -60,7 +61,7 @@ export default function RegisterScreen() {
       showSuccess('Đăng nhập Google thành công!');
     } catch (error: any) {
       console.error('Google Login Error:', error);
-      showError(error.message || 'Đăng nhập Google thất bại.');
+      showError(parseError(error));
     } finally {
       setGoogleSubmitting(false);
     }

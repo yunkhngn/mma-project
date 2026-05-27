@@ -5,6 +5,7 @@ import { Mail } from 'lucide-react-native';
 import { useAuth } from '@/context/auth-context';
 
 import { useToast } from '@/context/toast-context';
+import { parseError } from '@/utils/error-parser';
 
 export default function OnboardingScreen() {
   const router = useRouter();
@@ -21,7 +22,7 @@ export default function OnboardingScreen() {
       showSuccess('Đăng nhập Google thành công!');
     } catch (error: any) {
       console.error('Google Login Error on Onboarding:', error);
-      showError(error.message || 'Đăng nhập bằng Google thất bại.');
+      showError(parseError(error));
     } finally {
       setLoading(false);
     }
