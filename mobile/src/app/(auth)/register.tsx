@@ -4,6 +4,8 @@ import { useRouter } from 'expo-router';
 import { Eye, EyeOff, ArrowLeft } from 'lucide-react-native';
 import { useAuth } from '@/context/auth-context';
 
+import { useToast } from '@/context/toast-context';
+
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const IMAGE_HEIGHT = Math.round(SCREEN_HEIGHT * 0.5);
 const CARD_TOP_OFFSET = Math.round(SCREEN_HEIGHT * 0.3);
@@ -11,6 +13,7 @@ const CARD_TOP_OFFSET = Math.round(SCREEN_HEIGHT * 0.3);
 export default function RegisterScreen() {
   const router = useRouter();
   const { register, loginWithGoogle } = useAuth();
+  const { showError, showSuccess } = useToast();
 
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -23,34 +26,26 @@ export default function RegisterScreen() {
   const [submitting, setSubmitting] = useState(false);
   const [googleSubmitting, setGoogleSubmitting] = useState(false);
 
-  const showAlert = (title: string, message: string) => {
-    if (Platform.OS === 'web') {
-      alert(`${title}: ${message}`);
-    } else {
-      Alert.alert(title, message);
-    }
-  };
-
   const handleRegister = async () => {
     if (!fullName || !email || !password || !confirmPassword) {
-      showAlert('Lỗi', 'Vui lòng nhập đầy đủ các trường bắt buộc');
+      showError('Vui lòng nhập đầy đủ các trường bắt buộc');
       return;
     }
     if (password !== confirmPassword) {
-      showAlert('Lỗi', 'Mật khẩu xác nhận không khớp');
+      showError('Mật khẩu xác nhận không khớp');
       return;
     }
     if (password.length < 8) {
-      showAlert('Lỗi', 'Mật khẩu phải có ít nhất 8 ký tự');
+      showError('Mật khẩu phải có ít nhất 8 ký tự');
       return;
     }
     setSubmitting(true);
     try {
       await register(fullName.trim(), email.trim(), phone.trim(), password);
-      showAlert('Thành công', 'Tạo tài khoản thành công!');
+      showSuccess('Tạo tài khoản thành công!');
     } catch (error: any) {
       console.error('Email Registration Error:', error);
-      showAlert('Đăng ký thất bại', error.message || 'Đã xảy ra lỗi vui lòng thử lại.');
+      showError(error.message || 'Đăng ký thất bại. Vui lòng thử lại.');
     } finally {
       setSubmitting(false);
     }
@@ -62,9 +57,10 @@ export default function RegisterScreen() {
       console.log('Initiating Google Sign-In...');
       await loginWithGoogle();
       console.log('Google Sign-In successful.');
+      showSuccess('Đăng nhập Google thành công!');
     } catch (error: any) {
       console.error('Google Login Error:', error);
-      showAlert('Đăng nhập thất bại', error.message || 'Đã xảy ra lỗi vui lòng thử lại.');
+      showError(error.message || 'Đăng nhập Google thất bại.');
     } finally {
       setGoogleSubmitting(false);
     }

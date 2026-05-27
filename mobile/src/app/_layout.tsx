@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import { AuthProvider, useAuth } from '@/context/auth-context';
+import { ToastProvider } from '@/context/toast-context';
 
 function NavigationGate() {
   const { user, isLoading } = useAuth();
@@ -48,10 +49,12 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <AuthProvider>
-        <AnimatedSplashOverlay />
-        <NavigationGate />
-      </AuthProvider>
+      <ToastProvider>
+        <AuthProvider>
+          <AnimatedSplashOverlay />
+          <NavigationGate />
+        </AuthProvider>
+      </ToastProvider>
     </ThemeProvider>
   );
 }

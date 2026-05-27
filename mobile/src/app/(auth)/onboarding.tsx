@@ -4,18 +4,13 @@ import { useRouter } from 'expo-router';
 import { Mail } from 'lucide-react-native';
 import { useAuth } from '@/context/auth-context';
 
+import { useToast } from '@/context/toast-context';
+
 export default function OnboardingScreen() {
   const router = useRouter();
   const { loginWithGoogle } = useAuth();
+  const { showError, showSuccess } = useToast();
   const [loading, setLoading] = useState(false);
-
-  const showAlert = (title: string, message: string) => {
-    if (Platform.OS === 'web') {
-      alert(`${title}: ${message}`);
-    } else {
-      Alert.alert(title, message);
-    }
-  };
 
   const handleGoogleLogin = async () => {
     setLoading(true);
@@ -23,9 +18,10 @@ export default function OnboardingScreen() {
       console.log('Initiating Google Sign-In on Onboarding...');
       await loginWithGoogle();
       console.log('Google Sign-In successful on Onboarding.');
+      showSuccess('Đăng nhập Google thành công!');
     } catch (error: any) {
       console.error('Google Login Error on Onboarding:', error);
-      showAlert('Đăng nhập thất bại', error.message || 'Đã xảy ra lỗi khi đăng nhập bằng Google.');
+      showError(error.message || 'Đăng nhập bằng Google thất bại.');
     } finally {
       setLoading(false);
     }

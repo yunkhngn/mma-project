@@ -4,6 +4,8 @@ import { useRouter } from 'expo-router';
 import { Eye, EyeOff, ArrowLeft } from 'lucide-react-native';
 import { useAuth } from '@/context/auth-context';
 
+import { useToast } from '@/context/toast-context';
+
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const IMAGE_HEIGHT = Math.round(SCREEN_HEIGHT * 0.5);
 const CARD_TOP_OFFSET = Math.round(SCREEN_HEIGHT * 0.3);
@@ -11,7 +13,8 @@ const CARD_TOP_OFFSET = Math.round(SCREEN_HEIGHT * 0.3);
 export default function LoginScreen() {
   const router = useRouter();
   const { login, loginWithGoogle } = useAuth();
-  
+  const { showError, showSuccess } = useToast();
+
   const [role, setRole] = useState<'passenger' | 'admin'>('passenger');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,25 +22,18 @@ export default function LoginScreen() {
   const [submitting, setSubmitting] = useState(false);
   const [googleSubmitting, setGoogleSubmitting] = useState(false);
 
-  const showAlert = (title: string, message: string) => {
-    if (Platform.OS === 'web') {
-      alert(`${title}: ${message}`);
-    } else {
-      Alert.alert(title, message);
-    }
-  };
-
   const handleLogin = async () => {
     if (!email || !password) {
-      showAlert('Lỗi', 'Vui lòng điền đầy đủ email và mật khẩu');
+      showError('Vui lòng điền đầy đủ email và mật khẩu');
       return;
     }
     setSubmitting(true);
     try {
       await login(email.trim(), password, role);
+      showSuccess('Đăng nhập thành công!');
     } catch (error: any) {
       console.error('Email Login Error:', error);
-      showAlert('Đăng nhập thất bại', error.message || 'Đã xảy ra lỗi vui lòng thử lại.');
+      showError(error.message || 'Đăng nhập thất bại. Vui lòng thử lại.');
     } finally {
       setSubmitting(false);
     }
@@ -49,9 +45,10 @@ export default function LoginScreen() {
       console.log('Initiating Google Sign-In...');
       await loginWithGoogle();
       console.log('Google Sign-In successful.');
+      showSuccess('Đăng nhập Google thành công!');
     } catch (error: any) {
       console.error('Google Login Error:', error);
-      showAlert('Đăng nhập thất bại', error.message || 'Đã xảy ra lỗi vui lòng thử lại.');
+      showError(error.message || 'Đăng nhập Google thất bại.');
     } finally {
       setGoogleSubmitting(false);
     }
@@ -170,7 +167,7 @@ export default function LoginScreen() {
               <View className="flex-1 h-[1px] bg-gray-200" />
             </View>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={handleGoogleLogin}
               disabled={submitting || googleSubmitting}
               className="border border-gray-200 py-4 rounded-full flex-row justify-center items-center gap-x-2"

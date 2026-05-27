@@ -87,7 +87,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const loginWithGoogle = async () => {
-    setIsLoading(true);
     try {
       if (Platform.OS === 'web') {
         const provider = new GoogleAuthProvider();
@@ -114,13 +113,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         }
       }
-    } catch (error) {
+    } catch (error: any) {
+      // User closed the popup — stay on login screen silently
+      if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
+        return;
+      }
       console.error('Google Sign-In error:', error);
       await signOut(auth);
       setUser(null);
       throw error;
-    } finally {
-      setIsLoading(false);
     }
   };
 
