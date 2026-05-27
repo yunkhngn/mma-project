@@ -27,15 +27,27 @@ export class AuthService {
       });
 
       if (!user) {
-        user = await this.prisma.user.create({
-          data: {
-            firebaseUid: uid,
-            email: email,
-            fullName: name || email.split('@')[0],
-            phone: '',
-            role: 'passenger',
-          },
+        // Handle federated account linking: if user with same email exists, link Firebase Uid
+        const existingUserByEmail = await this.prisma.user.findUnique({
+          where: { email: email },
         });
+
+        if (existingUserByEmail) {
+          user = await this.prisma.user.update({
+            where: { id: existingUserByEmail.id },
+            data: { firebaseUid: uid },
+          });
+        } else {
+          user = await this.prisma.user.create({
+            data: {
+              firebaseUid: uid,
+              email: email,
+              fullName: name || email.split('@')[0],
+              phone: '',
+              role: 'passenger',
+            },
+          });
+        }
       }
 
       return user;
