@@ -19,7 +19,7 @@ const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
 // Init Auth — use AsyncStorage persistence on native, browser localStorage on web
 const auth = Platform.OS === 'web'
-  ? initializeAuth(app, { persistence: browserLocalPersistence })
+  ? getAuth(app)
   : initializeAuth(app, { persistence: getReactNativePersistence(AsyncStorage) });
 
 // Init Firestore

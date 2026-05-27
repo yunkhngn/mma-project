@@ -87,6 +87,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       if (Platform.OS === 'web') {
         const provider = new GoogleAuthProvider();
+        console.log('Firebase Auth instance:', auth);
+        console.log('Google Auth Provider instance:', provider);
         await signInWithPopup(auth, provider);
       } else {
         // For Native (Expo Go / Emulator) where Google SDK is not configured:
