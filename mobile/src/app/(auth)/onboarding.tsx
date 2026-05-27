@@ -10,8 +10,8 @@ export default function OnboardingScreen() {
     <View className="flex-1 bg-black">
       {/* Background Image Header */}
       <View className="h-[50%] w-full relative">
-        <Image 
-          source={{ uri: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80' }} 
+        <Image
+          source={{ uri: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80' }}
           className="w-full h-full object-cover"
         />
         <View className="absolute inset-0 bg-black/10" />
@@ -33,16 +33,12 @@ export default function OnboardingScreen() {
 
         {/* Buttons */}
         <View className="gap-y-3 mt-6">
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={() => router.push('/(auth)/login')}
             className="bg-black py-4 rounded-full flex-row justify-center items-center gap-x-2"
           >
             <Mail size={18} color="white" />
             <Text className="text-white font-semibold text-base">Tiếp tục với Email</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity className="bg-gray-50 border border-gray-200 py-4 rounded-full flex-row justify-center items-center gap-x-2">
-            <Text className="text-gray-800 font-semibold text-base">Tiếp tục với Apple</Text>
           </TouchableOpacity>
 
           <TouchableOpacity className="bg-gray-50 border border-gray-200 py-4 rounded-full flex-row justify-center items-center gap-x-2">
