@@ -1,10 +1,24 @@
-import React from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Image, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Mail } from 'lucide-react-native';
+import { useAuth } from '@/context/auth-context';
 
 export default function OnboardingScreen() {
   const router = useRouter();
+  const { loginWithGoogle } = useAuth();
+  const [loading, setLoading] = useState(false);
+
+  const handleGoogleLogin = async () => {
+    setLoading(true);
+    try {
+      await loginWithGoogle();
+    } catch (error: any) {
+      Alert.alert('Đăng nhập thất bại', error.message || 'Đã xảy ra lỗi khi đăng nhập bằng Google.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <View className="flex-1 bg-black">
@@ -15,9 +29,6 @@ export default function OnboardingScreen() {
           className="w-full h-full object-cover"
         />
         <View className="absolute inset-0 bg-black/10" />
-        <Text className="absolute top-16 left-6 text-white text-3xl font-extrabold tracking-widest">
-          Nomad
-        </Text>
       </View>
 
       {/* Sheet Content Card */}
@@ -36,13 +47,22 @@ export default function OnboardingScreen() {
           <TouchableOpacity
             onPress={() => router.push('/(auth)/login')}
             className="bg-black py-4 rounded-full flex-row justify-center items-center gap-x-2"
+            disabled={loading}
           >
             <Mail size={18} color="white" />
             <Text className="text-white font-semibold text-base">Tiếp tục với Email</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity className="bg-gray-50 border border-gray-200 py-4 rounded-full flex-row justify-center items-center gap-x-2">
-            <Text className="text-gray-800 font-semibold text-base">Tiếp tục với Google</Text>
+          <TouchableOpacity
+            onPress={handleGoogleLogin}
+            disabled={loading}
+            className="bg-gray-50 border border-gray-200 py-4 rounded-full flex-row justify-center items-center gap-x-2"
+          >
+            {loading ? (
+              <ActivityIndicator color="#1f2937" />
+            ) : (
+              <Text className="text-gray-800 font-semibold text-base">Tiếp tục với Google</Text>
+            )}
           </TouchableOpacity>
         </View>
 

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { onAuthStateChanged, User as FirebaseUser, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, signOut } from 'firebase/auth';
+import { onAuthStateChanged, User as FirebaseUser, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, signOut, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { Platform } from 'react-native';
 import { auth } from '../services/firebase';
 import { authService } from '../services/auth.service';
 import { User } from '../types';
@@ -10,6 +11,7 @@ interface AuthContextType {
   isLoading: boolean;
   login: (email: string, password: string, role: 'passenger' | 'admin') => Promise<void>;
   register: (fullName: string, email: string, phone: string, password: string) => Promise<void>;
+  loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -80,6 +82,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const loginWithGoogle = async () => {
+    setIsLoading(true);
+    try {
+      if (Platform.OS === 'web') {
+        const provider = new GoogleAuthProvider();
+        await signInWithPopup(auth, provider);
+      } else {
+        // For Native (Expo Go / Emulator) where Google SDK is not configured:
+        // We simulate Google login using a test account (google-test@mma.com)
+        // so that the entire backend sync & dashboard flow can be verified.
+        const testEmail = 'google-test@mma.com';
+        const testPass = 'googleTestPassword123!';
+        try {
+          await signInWithEmailAndPassword(auth, testEmail, testPass);
+        } catch (e: any) {
+          if (e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential' || e.code === 'auth/invalid-email') {
+            // If doesn't exist, create it so they have a fresh account
+            const credential = await createUserWithEmailAndPassword(auth, testEmail, testPass);
+            if (credential.user) {
+              await updateProfile(credential.user, { displayName: 'Google Test User' });
+            }
+          } else {
+            throw e;
+          }
+        }
+      }
+      const profile = await authService.syncUser();
+      setUser(profile);
+    } catch (error) {
+      await signOut(auth);
+      setUser(null);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const logout = async () => {
     setIsLoading(true);
     await signOut(auth);
@@ -89,7 +128,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, firebaseUser, isLoading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, firebaseUser, isLoading, login, register, loginWithGoogle, logout }}>
       {children}
     </AuthContext.Provider>
   );

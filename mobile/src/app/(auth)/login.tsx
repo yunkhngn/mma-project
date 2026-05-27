@@ -10,13 +10,14 @@ const CARD_TOP_OFFSET = Math.round(SCREEN_HEIGHT * 0.3);
 
 export default function LoginScreen() {
   const router = useRouter();
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   
   const [role, setRole] = useState<'passenger' | 'admin'>('passenger');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [googleSubmitting, setGoogleSubmitting] = useState(false);
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -30,6 +31,17 @@ export default function LoginScreen() {
       Alert.alert('Đăng nhập thất bại', error.message || 'Đã xảy ra lỗi vui lòng thử lại.');
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setGoogleSubmitting(true);
+    try {
+      await loginWithGoogle();
+    } catch (error: any) {
+      Alert.alert('Đăng nhập thất bại', error.message || 'Đã xảy ra lỗi vui lòng thử lại.');
+    } finally {
+      setGoogleSubmitting(false);
     }
   };
 
@@ -130,7 +142,7 @@ export default function LoginScreen() {
           <View className="mt-8">
             <TouchableOpacity
               onPress={handleLogin}
-              disabled={submitting}
+              disabled={submitting || googleSubmitting}
               className="bg-black py-4 rounded-full items-center justify-center"
             >
               {submitting ? (
@@ -146,8 +158,16 @@ export default function LoginScreen() {
               <View className="flex-1 h-[1px] bg-gray-200" />
             </View>
 
-            <TouchableOpacity className="border border-gray-200 py-4 rounded-full flex-row justify-center items-center gap-x-2">
-              <Text className="text-gray-800 font-semibold text-base">Google</Text>
+            <TouchableOpacity 
+              onPress={handleGoogleLogin}
+              disabled={submitting || googleSubmitting}
+              className="border border-gray-200 py-4 rounded-full flex-row justify-center items-center gap-x-2"
+            >
+              {googleSubmitting ? (
+                <ActivityIndicator color="#1f2937" />
+              ) : (
+                <Text className="text-gray-800 font-semibold text-base">Google</Text>
+              )}
             </TouchableOpacity>
 
             {role === 'passenger' && (

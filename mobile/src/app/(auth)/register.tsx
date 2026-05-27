@@ -10,17 +10,18 @@ const CARD_TOP_OFFSET = Math.round(SCREEN_HEIGHT * 0.3);
 
 export default function RegisterScreen() {
   const router = useRouter();
-  const { register } = useAuth();
+  const { register, loginWithGoogle } = useAuth();
 
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [googleSubmitting, setGoogleSubmitting] = useState(false);
 
   const handleRegister = async () => {
     if (!fullName || !email || !password || !confirmPassword) {
@@ -43,6 +44,17 @@ export default function RegisterScreen() {
       Alert.alert('Đăng ký thất bại', error.message || 'Đã xảy ra lỗi vui lòng thử lại.');
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setGoogleSubmitting(true);
+    try {
+      await loginWithGoogle();
+    } catch (error: any) {
+      Alert.alert('Đăng nhập thất bại', error.message || 'Đã xảy ra lỗi vui lòng thử lại.');
+    } finally {
+      setGoogleSubmitting(false);
     }
   };
 
@@ -74,7 +86,7 @@ export default function RegisterScreen() {
       >
         <View className="bg-white rounded-t-[32px] px-6 pt-8 pb-6" style={{ minHeight: SCREEN_HEIGHT - CARD_TOP_OFFSET + 32 }}>
           <Text className="text-2xl font-bold text-gray-900">Tạo tài khoản</Text>
-          <Text className="text-gray-500 text-sm mt-1">Bắt đầu hành trình của bạn cùng Nomad</Text>
+          <Text className="text-gray-500 text-sm mt-1">Bắt đầu hành trình của bạn</Text>
 
           {/* Form */}
           <View className="mt-6 gap-y-4">
@@ -156,7 +168,7 @@ export default function RegisterScreen() {
           <View className="mt-8">
             <TouchableOpacity
               onPress={handleRegister}
-              disabled={submitting}
+              disabled={submitting || googleSubmitting}
               className="bg-black py-4 rounded-full items-center justify-center"
             >
               {submitting ? (
@@ -172,8 +184,16 @@ export default function RegisterScreen() {
               <View className="flex-1 h-[1px] bg-gray-200" />
             </View>
 
-            <TouchableOpacity className="border border-gray-200 py-4 rounded-full flex-row justify-center items-center gap-x-2">
-              <Text className="text-gray-800 font-semibold text-base">Google</Text>
+            <TouchableOpacity
+              onPress={handleGoogleLogin}
+              disabled={submitting || googleSubmitting}
+              className="border border-gray-200 py-4 rounded-full flex-row justify-center items-center gap-x-2"
+            >
+              {googleSubmitting ? (
+                <ActivityIndicator color="#1f2937" />
+              ) : (
+                <Text className="text-gray-800 font-semibold text-base">Google</Text>
+              )}
             </TouchableOpacity>
 
             <TouchableOpacity
