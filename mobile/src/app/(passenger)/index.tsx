@@ -36,7 +36,7 @@ const POPULAR_ROUTES = [
 ];
 
 export default function PassengerHome() {
-  const { user, firebaseUser } = useAuth();
+  const { user, firebaseUser, logout } = useAuth();
   const [from, setFrom] = useState('Bến xe Mỹ Đình');
   const [to, setTo] = useState('');
 
@@ -62,15 +62,15 @@ export default function PassengerHome() {
       {/* ── Header ── */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <View style={styles.avatarRing}>
+          <TouchableOpacity style={styles.avatarRing} activeOpacity={0.8} onPress={logout}>
             {avatarUri ? (
               <Image source={{ uri: avatarUri }} style={StyleSheet.absoluteFillObject} />
             ) : (
               <Text style={styles.avatarInitial}>{initials}</Text>
             )}
-          </View>
+          </TouchableOpacity>
           <View>
-            <Text style={styles.greeting}>Xin chào 👋</Text>
+            <Text style={styles.greeting}>Xin chào</Text>
             <Text style={styles.appName}>{displayName}</Text>
           </View>
         </View>
