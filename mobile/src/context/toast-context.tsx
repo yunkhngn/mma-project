@@ -81,7 +81,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   const slideAnim = useRef(new Animated.Value(-120)).current;
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const showToast = (message: string, type: ToastType, duration = 4000) => {
+  const showToast = (message: string, type: ToastType, duration = 4500) => {
     // Clear any existing timer
     if (timerRef.current) {
       clearTimeout(timerRef.current);
@@ -153,52 +153,53 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Modern solid-color themes designed to pop against any background
-  const getToastStyles = (type: ToastType) => {
+  // Modern solid-color themes (using exact Hex values for bulletproof Web opaque styling)
+  const getToastTheme = (type: ToastType) => {
     switch (type) {
       case 'success':
         return {
-          bg: 'bg-emerald-600 border-emerald-700 shadow-emerald-950/20',
-          text: 'text-white',
+          bg: '#059669', // Solid rich emerald green (completely opaque)
+          border: '#047857',
         };
       case 'error':
         return {
-          bg: 'bg-rose-600 border-rose-700 shadow-rose-950/20',
-          text: 'text-white',
+          bg: '#e11d48', // Solid vibrant rose red (completely opaque)
+          border: '#be123c',
         };
       case 'info':
         return {
-          bg: 'bg-slate-800 border-slate-900 shadow-slate-950/20',
-          text: 'text-white',
+          bg: '#1e293b', // Solid slate dark (completely opaque)
+          border: '#0f172a',
         };
     }
   };
 
-  const toastStyle = toast ? getToastStyles(toast.type) : null;
+  const theme = toast ? getToastTheme(toast.type) : null;
 
   return (
     <ToastContext.Provider value={{ showToast, showSuccess, showError, showInfo }}>
       {children}
-      {toast && toastStyle && (
+      {toast && theme && (
         <Animated.View
           style={[
             styles.toastContainer,
             {
               opacity: fadeAnim,
               transform: [{ translateY: slideAnim }],
+              backgroundColor: theme.bg,
+              borderColor: theme.border,
             },
           ]}
-          className={`flex-row items-center justify-between border px-4 py-3.5 rounded-2xl ${toastStyle.bg}`}
         >
-          <View className="flex-row items-center flex-1 mr-2">
-            <View className="mr-3 flex-shrink-0">{renderIcon(toast.type)}</View>
-            <View className="flex-1">
-              <Text className={`font-semibold text-[13px] sm:text-[14px] leading-snug ${toastStyle.text}`}>
+          <View style={styles.contentWrapper}>
+            <View style={styles.iconContainer}>{renderIcon(toast.type)}</View>
+            <View style={styles.textWrapper}>
+              <Text style={styles.messageText}>
                 {toast.message}
               </Text>
             </View>
           </View>
-          <TouchableOpacity onPress={dismissToast} className="p-1 rounded-full active:bg-white/10 flex-shrink-0">
+          <TouchableOpacity onPress={dismissToast} style={styles.closeButton} activeOpacity={0.7}>
             <X size={16} color="#ffffff" style={{ opacity: 0.8 }} />
           </TouchableOpacity>
         </Animated.View>
@@ -221,14 +222,49 @@ const styles = StyleSheet.create({
     top: 0,
     left: 16,
     right: 16,
-    zIndex: 99999,
+    zIndex: 999999,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderWidth: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderRadius: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.18,
-    shadowRadius: 16,
+    shadowOpacity: 0.22,
+    shadowRadius: 12,
     elevation: 10,
-    maxWidth: Platform.OS === 'web' ? 480 : undefined,
+    maxWidth: Platform.OS === 'web' ? 520 : undefined,
     alignSelf: Platform.OS === 'web' ? 'center' : 'auto',
     width: Platform.OS === 'web' ? width - 32 : undefined,
+  },
+  contentWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    marginRight: 12,
+  },
+  iconContainer: {
+    marginRight: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  textWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  messageText: {
+    color: '#ffffff',
+    fontWeight: '600',
+    fontSize: 13,
+    lineHeight: 18,
+    textAlign: 'left',
+  },
+  closeButton: {
+    padding: 6,
+    borderRadius: 99,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
