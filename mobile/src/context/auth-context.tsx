@@ -27,11 +27,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setFirebaseUser(fUser);
       if (fUser) {
         try {
-          // Default to sync as passenger first to resolve details
+          // Default to sync state with backend.
+          // This will run once when any sign-in flow completes successfully.
+          console.log('Firebase auth state changed: User logged in. Syncing profile...');
           const profile = await authService.syncUser();
           setUser(profile);
         } catch (error) {
-          console.error('Failed to sync user state:', error);
+          console.error('Failed to sync user state in listener:', error);
           setUser(null);
         }
       } else {
@@ -46,15 +48,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (email: string, password: string, role: 'passenger' | 'admin') => {
     setIsLoading(true);
     try {
+      console.log(`Starting sign-in for email: ${email} as role: ${role}`);
       await signInWithEmailAndPassword(auth, email, password);
-      let profile: User;
+      
+      // If the user logging in is an admin, we perform administrative validation
       if (role === 'admin') {
-        profile = await authService.adminLogin();
-      } else {
-        profile = await authService.syncUser();
+        console.log('Admin login detected. Verifying permission with backend...');
+        const profile = await authService.adminLogin();
+        setUser(profile);
       }
-      setUser(profile);
     } catch (error) {
+      console.error('Sign-in error:', error);
       await signOut(auth);
       setUser(null);
       throw error;
@@ -66,14 +70,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const register = async (fullName: string, email: string, phone: string, password: string) => {
     setIsLoading(true);
     try {
+      console.log(`Starting registration for: ${email}`);
       const credential = await createUserWithEmailAndPassword(auth, email, password);
       if (credential.user) {
+        console.log('Firebase user created. Updating profile display name...');
         await updateProfile(credential.user, { displayName: fullName });
       }
-      // Force sync with backend (backend sets role: 'passenger')
-      const profile = await authService.syncUser();
-      setUser(profile);
     } catch (error) {
+      console.error('Registration error:', error);
       await signOut(auth);
       setUser(null);
       throw error;
@@ -87,8 +91,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       if (Platform.OS === 'web') {
         const provider = new GoogleAuthProvider();
-        console.log('Firebase Auth instance:', auth);
-        console.log('Google Auth Provider instance:', provider);
+        console.log('Initiating Firebase Google Sign-In popup on Web...');
         await signInWithPopup(auth, provider);
       } else {
         // For Native (Expo Go / Emulator) where Google SDK is not configured:
@@ -96,11 +99,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // so that the entire backend sync & dashboard flow can be verified.
         const testEmail = 'google-test@mma.com';
         const testPass = 'googleTestPassword123!';
+        console.log('Simulating Google Sign-In on Native using fallback...');
         try {
           await signInWithEmailAndPassword(auth, testEmail, testPass);
         } catch (e: any) {
           if (e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential' || e.code === 'auth/invalid-email') {
-            // If doesn't exist, create it so they have a fresh account
+            console.log('Fallback user not found. Creating a new test account...');
             const credential = await createUserWithEmailAndPassword(auth, testEmail, testPass);
             if (credential.user) {
               await updateProfile(credential.user, { displayName: 'Google Test User' });
@@ -110,9 +114,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         }
       }
-      const profile = await authService.syncUser();
-      setUser(profile);
     } catch (error) {
+      console.error('Google Sign-In error:', error);
       await signOut(auth);
       setUser(null);
       throw error;
