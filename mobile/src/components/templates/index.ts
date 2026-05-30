@@ -1,2 +1,0 @@
-export { AuthScreenTemplate } from './AuthScreenTemplate';
-
