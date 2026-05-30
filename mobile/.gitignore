@@ -32,16 +32,11 @@ yarn-error.*
 
 # local env files
 .env*.local
-.env
-
-# Firebase config files (contain sensitive project info)
-google-services.json
-GoogleService-Info.plist
 
 # typescript
 *.tsbuildinfo
 
-example
+app-example
 
 # generated native folders
 /ios
