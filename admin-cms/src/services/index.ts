@@ -1,5 +1,5 @@
 import axiosInstance from '@/lib/axios';
-import type { User, Route, Trip, Vehicle, Booking, RevenueReport } from '@/types';
+import type { User, Route, Trip, Vehicle, VehicleType, Booking, RevenueReport } from '@/types';
 
 // ==========================================
 // USER SERVICE
@@ -12,6 +12,36 @@ export const userService = {
 
   getById: async (id: number): Promise<User> => {
     const response = await axiosInstance.get<User>(`/users/${id}`);
+    return response.data;
+  },
+
+  create: async (data: {
+    email: string;
+    fullName: string;
+    phone?: string;
+    role: 'passenger' | 'admin';
+    password?: string;
+  }): Promise<User> => {
+    const response = await axiosInstance.post<User>('/users', data);
+    return response.data;
+  },
+
+  update: async (
+    id: number,
+    data: {
+      fullName?: string;
+      phone?: string;
+      role?: 'passenger' | 'admin';
+      email?: string;
+      password?: string;
+    },
+  ): Promise<User> => {
+    const response = await axiosInstance.put<User>(`/users/${id}`, data);
+    return response.data;
+  },
+
+  delete: async (id: number): Promise<User> => {
+    const response = await axiosInstance.delete<User>(`/users/${id}`);
     return response.data;
   },
 };
@@ -109,6 +139,54 @@ export const vehicleService = {
 
   getById: async (id: number): Promise<Vehicle> => {
     const response = await axiosInstance.get<Vehicle>(`/vehicles/${id}`);
+    return response.data;
+  },
+
+  create: async (data: {
+    name: string;
+    totalSeats: number;
+    type: string;
+    seatLayout?: any;
+  }): Promise<Vehicle> => {
+    const response = await axiosInstance.post<Vehicle>('/vehicles', data);
+    return response.data;
+  },
+
+  update: async (
+    id: number,
+    data: {
+      name?: string;
+      totalSeats?: number;
+      type?: string;
+      seatLayout?: any;
+    },
+  ): Promise<Vehicle> => {
+    const response = await axiosInstance.put<Vehicle>(`/vehicles/${id}`, data);
+    return response.data;
+  },
+
+  delete: async (id: number): Promise<Vehicle> => {
+    const response = await axiosInstance.delete<Vehicle>(`/vehicles/${id}`);
+    return response.data;
+  },
+
+  getAllTypes: async (): Promise<VehicleType[]> => {
+    const response = await axiosInstance.get<VehicleType[]>('/vehicles/types');
+    return response.data;
+  },
+
+  createType: async (data: { name: string }): Promise<VehicleType> => {
+    const response = await axiosInstance.post<VehicleType>('/vehicles/types', data);
+    return response.data;
+  },
+
+  updateType: async (id: number, data: { name: string }): Promise<VehicleType> => {
+    const response = await axiosInstance.put<VehicleType>(`/vehicles/types/${id}`, data);
+    return response.data;
+  },
+
+  deleteType: async (id: number): Promise<VehicleType> => {
+    const response = await axiosInstance.delete<VehicleType>(`/vehicles/types/${id}`);
     return response.data;
   },
 };

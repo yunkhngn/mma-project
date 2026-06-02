@@ -78,6 +78,17 @@ async function main() {
   }
   console.log('Vehicles seeded:', [vehicle1, vehicle2]);
 
+  // 3b. Seed Vehicle Types
+  const vehicleTypes = ['limousine', 'sleeper', 'standard'];
+  for (const name of vehicleTypes) {
+    await prisma.vehicleType.upsert({
+      where: { name },
+      update: {},
+      create: { name },
+    });
+  }
+  console.log('Vehicle types seeded');
+
   // 4. Seed Trips
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);

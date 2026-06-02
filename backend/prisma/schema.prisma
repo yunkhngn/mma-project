@@ -44,6 +44,13 @@ model Vehicle {
   @@map("vehicles")
 }
 
+model VehicleType {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  @@map("vehicle_types")
+}
+
 model Trip {
   id           Int      @id @default(autoincrement())
   routeId      Int      @map("route_id")

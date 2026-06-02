@@ -3,6 +3,11 @@ import DashboardLayout from '@/layouts/DashboardLayout';
 import AuthLayout from '@/layouts/AuthLayout';
 import LoginPage from '@/features/auth/pages/LoginPage';
 import DashboardOverviewPage from '@/features/dashboard/pages/DashboardOverviewPage';
+import UserManagementPage from '@/features/users/pages/UserManagementPage';
+import RouteManagementPage from '@/features/routes/pages/RouteManagementPage';
+import TripManagementPage from '@/features/trips/pages/TripManagementPage';
+import BookingManagementPage from '@/features/bookings/pages/BookingManagementPage';
+import VehiclePage from '@/features/vehicles/pages/VehiclePage';
 
 const ProtectedRoute = () => {
   const token = localStorage.getItem('admin_token');
@@ -26,6 +31,11 @@ export const routes = [
         element: <DashboardLayout />,
         children: [
           { path: '/', element: <DashboardOverviewPage /> },
+          { path: '/users', element: <UserManagementPage /> },
+          { path: '/routes', element: <RouteManagementPage /> },
+          { path: '/trips', element: <TripManagementPage /> },
+          { path: '/bookings', element: <BookingManagementPage /> },
+          { path: '/vehicles', element: <VehiclePage /> },
         ],
       },
     ],

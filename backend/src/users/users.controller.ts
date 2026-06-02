@@ -5,6 +5,8 @@ import {
   ParseIntPipe,
   NotFoundException,
   Put,
+  Post,
+  Delete,
   UseGuards,
   Request,
   UseInterceptors,
@@ -57,6 +59,52 @@ export class UsersController {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
     return user;
+  }
+
+  @Post()
+  @UseGuards(FirebaseAuthGuard, AdminGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Create new user account (Admin only)' })
+  @ApiResponse({ status: 201, description: 'User created successfully.' })
+  async create(
+    @Body()
+    body: {
+      email: string;
+      fullName: string;
+      phone?: string;
+      role: 'passenger' | 'admin';
+      password?: string;
+    },
+  ): Promise<UserEntity> {
+    return this.usersService.createUser(body);
+  }
+
+  @Put(':id')
+  @UseGuards(FirebaseAuthGuard, AdminGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Update user account settings (Admin only)' })
+  @ApiResponse({ status: 200, description: 'User updated successfully.' })
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body()
+    body: {
+      fullName?: string;
+      phone?: string;
+      role?: 'passenger' | 'admin';
+      email?: string;
+      password?: string;
+    },
+  ): Promise<UserEntity> {
+    return this.usersService.updateUserAdmin(id, body);
+  }
+
+  @Delete(':id')
+  @UseGuards(FirebaseAuthGuard, AdminGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Delete user account (Admin only)' })
+  @ApiResponse({ status: 250, description: 'User deleted successfully.' })
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<UserEntity> {
+    return this.usersService.deleteUser(id);
   }
 
   @Put('profile')
