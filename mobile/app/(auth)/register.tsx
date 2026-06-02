@@ -174,13 +174,13 @@ export default function RegisterScreen() {
             onPress={handleLoginPress} 
             activeOpacity={0.8}
             style={styles.signinContainer}
-            hitSlop={{ top: 12, bottom: 12, left: 24, right: 24 }}
+            hitSlop={{ top: 15, bottom: 15, left: 30, right: 30 }}
           >
             <Typography variant="body" style={styles.signinText}>
               Đã có tài khoản?{' '}
-              <Typography variant="body" style={styles.signinLink}>
-                Đăng nhập
-              </Typography>
+            </Typography>
+            <Typography variant="body" style={styles.signinLink}>
+              Đăng nhập
             </Typography>
           </TouchableOpacity>
         </View>

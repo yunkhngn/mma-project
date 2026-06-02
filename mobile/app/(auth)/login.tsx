@@ -10,7 +10,7 @@ import { useAuth } from '@/context/AuthContext';
 export default function LoginScreen() {
   const router = useRouter();
   const { loginWithEmail, loginWithGoogle } = useAuth();
-  
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -18,11 +18,11 @@ export default function LoginScreen() {
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
 
   const handleLogin = async () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
     const tempErrors: typeof errors = {};
     if (!email.trim()) tempErrors.email = 'Email hoặc số điện thoại là bắt buộc';
     if (!password) tempErrors.password = 'Mật khẩu là bắt buộc';
-    
+
     if (Object.keys(tempErrors).length > 0) {
       setErrors(tempErrors);
       return;
@@ -41,7 +41,7 @@ export default function LoginScreen() {
   };
 
   const handleGoogleSignIn = async () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
     setLoadingGoogle(true);
     try {
       await loginWithGoogle();
@@ -54,12 +54,12 @@ export default function LoginScreen() {
   };
 
   const handleForgotPress = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
     Alert.alert('Thông báo', 'Tính năng đặt lại mật khẩu đang được phát triển');
   };
 
   const handleSignUpPress = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
     router.push('/(auth)/register');
   };
 
@@ -72,18 +72,18 @@ export default function LoginScreen() {
         <View style={styles.overlay} />
       </ImageBackground>
 
-      <ScrollView 
+      <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={styles.scrollContainer} 
+        contentContainerStyle={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
         bounces={true}
         overScrollMode="never"
       >
-        <TouchableOpacity 
-          style={styles.topSpacer} 
-          activeOpacity={1} 
-          onPress={() => {}}
+        <TouchableOpacity
+          style={styles.topSpacer}
+          activeOpacity={1}
+          onPress={() => { }}
         />
 
         <View style={styles.formContainer}>
@@ -93,7 +93,7 @@ export default function LoginScreen() {
               VietTrip
             </Typography>
           </View>
-          
+
           <Typography variant="h1" style={styles.title}>
             Chào mừng trở lại
           </Typography>
@@ -120,8 +120,8 @@ export default function LoginScreen() {
             secureTextEntry
           />
 
-          <TouchableOpacity 
-            style={styles.forgotButton} 
+          <TouchableOpacity
+            style={styles.forgotButton}
             onPress={handleForgotPress}
             activeOpacity={0.8}
           >
@@ -130,8 +130,8 @@ export default function LoginScreen() {
             </Typography>
           </TouchableOpacity>
 
-          <TouchableOpacity 
-            style={styles.loginButton} 
+          <TouchableOpacity
+            style={styles.loginButton}
             onPress={handleLogin}
             disabled={loading}
             activeOpacity={0.8}
@@ -147,9 +147,9 @@ export default function LoginScreen() {
             <View style={styles.dividerLine} />
           </View>
 
-          <TouchableOpacity 
-            style={styles.socialButton} 
-            onPress={handleGoogleSignIn} 
+          <TouchableOpacity
+            style={styles.socialButton}
+            onPress={handleGoogleSignIn}
             disabled={loadingGoogle}
             activeOpacity={0.8}
           >
@@ -161,17 +161,17 @@ export default function LoginScreen() {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity 
-            onPress={handleSignUpPress} 
+          <TouchableOpacity
+            onPress={handleSignUpPress}
             activeOpacity={0.8}
             style={styles.signupContainer}
-            hitSlop={{ top: 12, bottom: 12, left: 24, right: 24 }}
+            hitSlop={{ top: 15, bottom: 15, left: 30, right: 30 }}
           >
             <Typography variant="body" style={styles.signupText}>
               Chưa có tài khoản?{' '}
-              <Typography variant="body" style={styles.signupLink}>
-                Đăng ký
-              </Typography>
+            </Typography>
+            <Typography variant="body" style={styles.signupLink}>
+              Đăng ký
             </Typography>
           </TouchableOpacity>
         </View>
