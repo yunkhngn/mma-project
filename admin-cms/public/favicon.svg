@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#14b8a6" />
+      <stop offset="100%" stop-color="#0ea5e9" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="128" fill="url(#grad)" />
+  <!-- M Shape -->
+  <path d="M100 360 L150 160 L205 280 L260 160 L310 360" stroke="url(#accent)" stroke-width="42" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <!-- A Shape -->
+  <path d="M335 360 L390 160 L445 360" stroke="url(#accent)" stroke-width="42" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <!-- A crossbar -->
+  <path d="M360 290 L420 290" stroke="url(#accent)" stroke-width="42" stroke-linecap="round" fill="none" />
+</svg>
