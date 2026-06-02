@@ -1,36 +1,57 @@
+import { auth } from './firebase';
 import Constants from 'expo-constants';
 
 const BASE_URL = Constants.expoConfig?.extra?.apiUrl || 'http://localhost:3000';
 
-export const apiClient = {
-  async get<T>(path: string, options?: RequestInit): Promise<T> {
-    const response = await fetch(`${BASE_URL}${path}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        ...options?.headers,
-      },
-      ...options,
-    });
-    if (!response.ok) {
-      throw new Error(`API GET request failed: ${response.statusText}`);
-    }
-    return response.json();
-  },
+/**
+ * Trình bọc Fetch API chung để kết nối với Backend.
+ * Tự động chèn Firebase ID Token vào Authorization header nếu người dùng đã đăng nhập.
+ */
+export async function apiFetch<T>(
+  endpoint: string,
+  options: RequestInit = {},
+  isMultipart = false
+): Promise<T> {
+  const url = `${BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+  
+  const headers = new Headers(options.headers || {});
+  
+  if (!isMultipart && !headers.has('Content-Type')) {
+    headers.set('Content-Type', 'application/json');
+  }
 
-  async post<T>(path: string, body: any, options?: RequestInit): Promise<T> {
-    const response = await fetch(`${BASE_URL}${path}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...options?.headers,
-      },
-      body: JSON.stringify(body),
-      ...options,
-    });
-    if (!response.ok) {
-      throw new Error(`API POST request failed: ${response.statusText}`);
+  // Tự động đính kèm Firebase ID Token nếu có người dùng đang đăng nhập
+  const currentUser = auth.currentUser;
+  if (currentUser) {
+    try {
+      const token = await currentUser.getIdToken();
+      headers.set('Authorization', `Bearer ${token}`);
+    } catch (error) {
+      console.warn('Không thể lấy Firebase ID Token:', error);
     }
-    return response.json();
-  },
-};
+  }
+
+  const config: RequestInit = {
+    ...options,
+    headers,
+  };
+
+  const response = await fetch(url, config);
+
+  if (!response.ok) {
+    let errorMessage = `Lỗi kết nối API: ${response.status} ${response.statusText}`;
+    try {
+      const errorData = await response.json();
+      errorMessage = errorData.message || errorMessage;
+    } catch (_) {
+      // Bỏ qua nếu không parse được JSON lỗi từ backend
+    }
+    throw new Error(errorMessage);
+  }
+
+  if (response.status === 204) {
+    return {} as T;
+  }
+
+  return response.json() as Promise<T>;
+}

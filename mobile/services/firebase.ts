@@ -10,6 +10,14 @@ export const firebaseConfig = {
   appId: "1:624050076746:web:example"
 };
 
+export const auth = {
+  currentUser: null as { getIdToken: () => Promise<string> } | null,
+};
+
+export const db = null as any;
+
 export const initializeFirebase = () => {
   console.log("Firebase initialized with configuration.");
 };
+
+
