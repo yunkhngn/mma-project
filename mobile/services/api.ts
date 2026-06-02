@@ -1,7 +1,21 @@
 import { auth } from './firebase';
 import Constants from 'expo-constants';
 
-const BASE_URL = Constants.expoConfig?.extra?.apiUrl || 'http://localhost:3000';
+const getBaseUrl = () => {
+  if (Constants.expoConfig?.extra?.apiUrl) {
+    return Constants.expoConfig.extra.apiUrl;
+  }
+  
+  const hostUri = Constants.expoConfig?.hostUri; // e.g. "192.168.2.2:8081"
+  if (hostUri) {
+    const ip = hostUri.split(':')[0];
+    return `http://${ip}:3000`;
+  }
+  
+  return 'http://localhost:3000';
+};
+
+const BASE_URL = getBaseUrl();
 
 /**
  * General Fetch API wrapper to communicate with the Backend.
