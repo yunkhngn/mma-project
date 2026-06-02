@@ -9,10 +9,10 @@ const getBaseUrl = () => {
   const hostUri = Constants.expoConfig?.hostUri; // e.g. "192.168.2.2:8081"
   if (hostUri) {
     const ip = hostUri.split(':')[0];
-    return `http://${ip}:3000`;
+    return `http://${ip}:3000/api`;
   }
   
-  return 'http://localhost:3000';
+  return 'http://localhost:3000/api';
 };
 
 const BASE_URL = getBaseUrl();
