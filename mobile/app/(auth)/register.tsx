@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity, Alert, ImageBackground } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 import { Typography } from '@/components/atoms/Typography';
 import { FormField } from '@/components/molecules/FormField';
 import { useAuth } from '@/context/AuthContext';
@@ -24,6 +25,7 @@ export default function RegisterScreen() {
   }>({});
 
   const handleRegister = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     const tempErrors: typeof errors = {};
     if (!fullName.trim()) tempErrors.fullName = 'Họ và tên là bắt buộc';
     if (!email.trim()) tempErrors.email = 'Email hoặc số điện thoại là bắt buộc';
@@ -53,6 +55,7 @@ export default function RegisterScreen() {
   };
 
   const handleGoogleSignIn = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     setLoadingGoogle(true);
     try {
       await loginWithGoogle("MOCK_GOOGLE_ID_TOKEN");
@@ -62,6 +65,11 @@ export default function RegisterScreen() {
     } finally {
       setLoadingGoogle(false);
     }
+  };
+
+  const handleLoginPress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    router.push('/(auth)/login');
   };
 
   return (
@@ -160,7 +168,7 @@ export default function RegisterScreen() {
             <Typography variant="body" style={styles.signinText}>
               Đã có tài khoản?{' '}
             </Typography>
-            <TouchableOpacity onPress={() => router.push('/(auth)/login')} activeOpacity={0.8}>
+            <TouchableOpacity onPress={handleLoginPress} activeOpacity={0.8}>
               <Typography variant="body" style={styles.signinLink}>
                 Đăng nhập
               </Typography>

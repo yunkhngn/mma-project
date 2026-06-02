@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, ImageBackground, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 import { Typography } from '@/components/atoms/Typography';
 import { useAuth } from '@/context/AuthContext';
 
@@ -11,6 +12,7 @@ export default function OnboardingScreen() {
   const [loadingGoogle, setLoadingGoogle] = useState(false);
 
   const handleGoogleSignIn = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
     setLoadingGoogle(true);
     try {
       await loginWithGoogle("MOCK_GOOGLE_ID_TOKEN");
@@ -20,6 +22,11 @@ export default function OnboardingScreen() {
     } finally {
       setLoadingGoogle(false);
     }
+  };
+
+  const handleEmailPress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
+    router.push('/(auth)/login');
   };
 
   return (
@@ -37,14 +44,14 @@ export default function OnboardingScreen() {
         </Typography>
       </View>
 
-      <ScrollView 
+      <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={styles.scrollContainer} 
+        contentContainerStyle={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.spacer} />
-        
+
         <View style={styles.bottomCard}>
           <Typography variant="h1" style={styles.title}>
             Khởi hành chuyến xe của bạn ngay hôm nay.
@@ -53,9 +60,9 @@ export default function OnboardingScreen() {
             Đặt vé xe khách cao cấp, khám phá các tuyến đường và di chuyển liền mạch.
           </Typography>
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.primaryEmailButton}
-            onPress={() => router.push('/(auth)/login')}
+            onPress={handleEmailPress}
             activeOpacity={0.8}
           >
             <View style={styles.buttonContent}>
@@ -66,9 +73,9 @@ export default function OnboardingScreen() {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity 
-            style={styles.socialButton} 
-            onPress={handleGoogleSignIn} 
+          <TouchableOpacity
+            style={styles.socialButton}
+            onPress={handleGoogleSignIn}
             disabled={loadingGoogle}
             activeOpacity={0.8}
           >
@@ -121,7 +128,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   spacer: {
-    height: 380,
+    height: 500,
   },
   bottomCard: {
     backgroundColor: '#FFFFFF',

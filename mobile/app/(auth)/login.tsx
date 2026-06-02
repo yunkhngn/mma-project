@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity, Alert, ImageBackground } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 import { Typography } from '@/components/atoms/Typography';
 import { FormField } from '@/components/molecules/FormField';
 import { useAuth } from '@/context/AuthContext';
@@ -17,6 +18,7 @@ export default function LoginScreen() {
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
 
   const handleLogin = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     const tempErrors: typeof errors = {};
     if (!email.trim()) tempErrors.email = 'Email hoặc số điện thoại là bắt buộc';
     if (!password) tempErrors.password = 'Mật khẩu là bắt buộc';
@@ -39,6 +41,7 @@ export default function LoginScreen() {
   };
 
   const handleGoogleSignIn = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     setLoadingGoogle(true);
     try {
       await loginWithGoogle("MOCK_GOOGLE_ID_TOKEN");
@@ -48,6 +51,16 @@ export default function LoginScreen() {
     } finally {
       setLoadingGoogle(false);
     }
+  };
+
+  const handleForgotPress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    Alert.alert('Thông báo', 'Tính năng đặt lại mật khẩu đang được phát triển');
+  };
+
+  const handleSignUpPress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    router.push('/(auth)/register');
   };
 
   return (
@@ -103,7 +116,7 @@ export default function LoginScreen() {
 
           <TouchableOpacity 
             style={styles.forgotButton} 
-            onPress={() => Alert.alert('Thông báo', 'Tính năng đặt lại mật khẩu đang được phát triển')}
+            onPress={handleForgotPress}
             activeOpacity={0.8}
           >
             <Typography variant="caption" style={styles.forgotText}>
@@ -146,7 +159,7 @@ export default function LoginScreen() {
             <Typography variant="body" style={styles.signupText}>
               Chưa có tài khoản?{' '}
             </Typography>
-            <TouchableOpacity onPress={() => router.push('/(auth)/register')} activeOpacity={0.8}>
+            <TouchableOpacity onPress={handleSignUpPress} activeOpacity={0.8}>
               <Typography variant="body" style={styles.signupLink}>
                 Đăng ký
               </Typography>
