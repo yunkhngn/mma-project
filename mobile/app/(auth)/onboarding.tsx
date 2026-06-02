@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ImageBackground, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import { View, StyleSheet, ImageBackground, TouchableOpacity, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { Typography } from '@/components/atoms/Typography';
 import { useAuth } from '@/context/AuthContext';
+import { useToast } from '@/context/ToastContext';
+import { getFriendlyErrorMessage } from '@/utils/errorHelpers';
 
 export default function OnboardingScreen() {
   const router = useRouter();
   const { loginWithGoogle } = useAuth();
+  const { showToast } = useToast();
   const [loadingGoogle, setLoadingGoogle] = useState(false);
 
   const handleGoogleSignIn = async () => {
@@ -18,7 +21,10 @@ export default function OnboardingScreen() {
       await loginWithGoogle();
       router.replace('/(tabs)');
     } catch (error: any) {
-      Alert.alert('Lỗi', error.message || 'Đăng nhập Google thất bại');
+      showToast({
+        message: getFriendlyErrorMessage(error),
+        type: 'error',
+      });
     } finally {
       setLoadingGoogle(false);
     }

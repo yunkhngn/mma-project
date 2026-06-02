@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity, Alert, ImageBackground } from 'react-native';
+import { View, StyleSheet, ScrollView, TouchableOpacity, ImageBackground } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { Typography } from '@/components/atoms/Typography';
 import { FormField } from '@/components/molecules/FormField';
 import { useAuth } from '@/context/AuthContext';
+import { useToast } from '@/context/ToastContext';
+import { getFriendlyErrorMessage } from '@/utils/errorHelpers';
 
 export default function LoginScreen() {
   const router = useRouter();
   const { loginWithEmail, loginWithGoogle } = useAuth();
+  const { showToast } = useToast();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -25,6 +28,10 @@ export default function LoginScreen() {
 
     if (Object.keys(tempErrors).length > 0) {
       setErrors(tempErrors);
+      showToast({
+        message: 'Vui lòng điền đầy đủ các thông tin đăng nhập.',
+        type: 'error',
+      });
       return;
     }
 
@@ -32,9 +39,16 @@ export default function LoginScreen() {
     setLoading(true);
     try {
       await loginWithEmail(email.trim(), password);
+      showToast({
+        message: 'Đăng nhập thành công!',
+        type: 'success',
+      });
       router.replace('/(tabs)');
     } catch (err: any) {
-      Alert.alert('Lỗi', err.message || 'Đăng nhập thất bại');
+      showToast({
+        message: getFriendlyErrorMessage(err),
+        type: 'error',
+      });
     } finally {
       setLoading(false);
     }
@@ -45,9 +59,16 @@ export default function LoginScreen() {
     setLoadingGoogle(true);
     try {
       await loginWithGoogle();
+      showToast({
+        message: 'Đăng nhập Google thành công!',
+        type: 'success',
+      });
       router.replace('/(tabs)');
     } catch (err: any) {
-      Alert.alert('Lỗi', err.message || 'Đăng nhập Google thất bại');
+      showToast({
+        message: getFriendlyErrorMessage(err),
+        type: 'error',
+      });
     } finally {
       setLoadingGoogle(false);
     }
@@ -55,7 +76,10 @@ export default function LoginScreen() {
 
   const handleForgotPress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
-    Alert.alert('Thông báo', 'Tính năng đặt lại mật khẩu đang được phát triển');
+    showToast({
+      message: 'Tính năng đặt lại mật khẩu đang được phát triển',
+      type: 'info',
+    });
   };
 
   const handleSignUpPress = () => {

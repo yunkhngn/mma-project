@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity, Alert, ImageBackground } from 'react-native';
+import { View, StyleSheet, ScrollView, TouchableOpacity, ImageBackground } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { Typography } from '@/components/atoms/Typography';
 import { FormField } from '@/components/molecules/FormField';
 import { useAuth } from '@/context/AuthContext';
+import { useToast } from '@/context/ToastContext';
+import { getFriendlyErrorMessage } from '@/utils/errorHelpers';
 
 export default function RegisterScreen() {
   const router = useRouter();
   const { registerWithEmail, loginWithGoogle } = useAuth();
+  const { showToast } = useToast();
 
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -38,6 +41,10 @@ export default function RegisterScreen() {
 
     if (Object.keys(tempErrors).length > 0) {
       setErrors(tempErrors);
+      showToast({
+        message: 'Vui lòng điền đầy đủ và chính xác thông tin đăng ký.',
+        type: 'error',
+      });
       return;
     }
 
@@ -45,10 +52,16 @@ export default function RegisterScreen() {
     setLoading(true);
     try {
       await registerWithEmail(email.trim(), password, fullName.trim(), '');
-      Alert.alert('Thành công', 'Tạo tài khoản thành công!');
+      showToast({
+        message: 'Đăng ký tài khoản thành công!',
+        type: 'success',
+      });
       router.replace('/(tabs)');
     } catch (err: any) {
-      Alert.alert('Lỗi', err.message || 'Đăng ký thất bại');
+      showToast({
+        message: getFriendlyErrorMessage(err),
+        type: 'error',
+      });
     } finally {
       setLoading(false);
     }
@@ -59,9 +72,16 @@ export default function RegisterScreen() {
     setLoadingGoogle(true);
     try {
       await loginWithGoogle();
+      showToast({
+        message: 'Đăng nhập Google thành công!',
+        type: 'success',
+      });
       router.replace('/(tabs)');
     } catch (err: any) {
-      Alert.alert('Lỗi', err.message || 'Đăng nhập Google thất bại');
+      showToast({
+        message: getFriendlyErrorMessage(err),
+        type: 'error',
+      });
     } finally {
       setLoadingGoogle(false);
     }
