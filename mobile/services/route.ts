@@ -3,14 +3,14 @@ import { Route } from '../types';
 
 export const routeService = {
   /**
-   * Lấy danh sách tất cả các tuyến đường.
+   * Get a list of all routes.
    */
   async getAllRoutes(): Promise<Route[]> {
     return apiFetch<Route[]>('/routes');
   },
 
   /**
-   * Lấy chi tiết thông tin của một tuyến đường theo ID.
+   * Get route details by its ID.
    */
   async getRouteById(id: number): Promise<Route> {
     return apiFetch<Route>(`/routes/${id}`);

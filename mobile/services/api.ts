@@ -4,8 +4,8 @@ import Constants from 'expo-constants';
 const BASE_URL = Constants.expoConfig?.extra?.apiUrl || 'http://localhost:3000';
 
 /**
- * Trình bọc Fetch API chung để kết nối với Backend.
- * Tự động chèn Firebase ID Token vào Authorization header nếu người dùng đã đăng nhập.
+ * General Fetch API wrapper to communicate with the Backend.
+ * Automatically appends the Firebase ID Token to the Authorization header if the user is authenticated.
  */
 export async function apiFetch<T>(
   endpoint: string,

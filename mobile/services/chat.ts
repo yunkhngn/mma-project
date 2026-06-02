@@ -5,7 +5,7 @@ import { ChatMessage } from '../types';
 
 export const chatService = {
   /**
-   * Đăng ký lắng nghe thời gian thực (Real-time listener) tin nhắn của cuộc hội thoại.
+   * Subscribe to a real-time listener for conversation messages in Firestore.
    */
   subscribeToMessages(
     passengerId: string,
@@ -31,7 +31,7 @@ export const chatService = {
   },
 
   /**
-   * Gửi tin nhắn từ hành khách lên hệ thống.
+   * Send a message from the passenger to the system.
    */
   async sendFromPassenger(text: string): Promise<any> {
     return apiFetch('/chat/passenger/send', {

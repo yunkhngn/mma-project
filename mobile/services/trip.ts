@@ -3,21 +3,21 @@ import { Trip } from '../types';
 
 export const tripService = {
   /**
-   * Lấy danh sách tất cả chuyến xe.
+   * Get a list of all trips.
    */
   async getAllTrips(): Promise<Trip[]> {
     return apiFetch<Trip[]>('/trips');
   },
 
   /**
-   * Lấy chi tiết chuyến xe theo ID.
+   * Get trip details by its ID.
    */
   async getTripById(id: number): Promise<Trip> {
     return apiFetch<Trip>(`/trips/${id}`);
   },
 
   /**
-   * Tìm kiếm chuyến xe lọc theo điểm đi, điểm đến và ngày đi.
+   * Search for trips filtered by origin, destination, and departure date.
    */
   async searchTrips(
     origin: string,

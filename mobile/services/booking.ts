@@ -3,14 +3,14 @@ import { Booking } from '../types';
 
 export const bookingService = {
   /**
-   * Lấy chi tiết thông tin vé đã đặt.
+   * Get details of a booked ticket by its ID.
    */
   async getBookingById(id: number): Promise<Booking> {
     return apiFetch<Booking>(`/bookings/${id}`);
   },
 
   /**
-   * Đặt vé xe mới.
+   * Book a new trip ticket.
    */
   async createBooking(
     tripId: number,
@@ -24,14 +24,14 @@ export const bookingService = {
   },
 
   /**
-   * Lấy lịch sử đặt vé của hành khách hiện tại.
+   * Get the booking history of the current passenger.
    */
   async getMyHistory(): Promise<Booking[]> {
     return apiFetch<Booking[]>('/bookings/my-history');
   },
 
   /**
-   * Hủy vé (Hành khách hủy vé của mình).
+   * Cancel a booking (cancel the passenger's own ticket).
    */
   async cancelBooking(id: number): Promise<Booking> {
     return apiFetch<Booking>(`/bookings/${id}/cancel`, {
