@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import Constants from 'expo-constants';
 import { auth } from '../services/firebase';
 import {
   onAuthStateChanged,
@@ -20,7 +21,7 @@ interface AuthContextType {
   loading: boolean;
   loginWithEmail: (email: string, password: string) => Promise<void>;
   registerWithEmail: (email: string, password: string, fullName: string, phone: string) => Promise<void>;
-  loginWithGoogle: (idToken: string) => Promise<void>;
+  loginWithGoogle: (idToken?: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -83,10 +84,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const loginWithGoogle = async (idToken: string) => {
+  const loginWithGoogle = async (idToken?: string) => {
     setLoading(true);
     try {
-      if (idToken === "MOCK_GOOGLE_ID_TOKEN") {
+      const isExpoGo = Constants.appOwnership === 'expo';
+      
+      if (idToken === "MOCK_GOOGLE_ID_TOKEN" || (isExpoGo && !idToken)) {
         // Mock Google Login using a Firebase test account for seamless local development
         const mockEmail = "google-mock-user@viettrip.com";
         const mockPassword = "GoogleMockPassword123!";
@@ -106,7 +109,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 await updateFirebaseProfile(userCredential.user, { displayName: "Google Mock User" });
               }
             } catch (createError) {
-              // If creation fails because user already exists (invalid-credential check was false positive), retry sign in
               await signInWithEmailAndPassword(auth, mockEmail, mockPassword);
             }
           } else {
@@ -114,7 +116,34 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           }
         }
       } else {
-        const credential = GoogleAuthProvider.credential(idToken);
+        let actualToken = idToken;
+        
+        // Trigger real native Google Sign-In if no token was passed (e.g. from screen buttons)
+        if (!actualToken) {
+          try {
+            const { GoogleSignin } = require('@react-native-google-signin/google-signin');
+            
+            // Configure Google Sign-In client ID (developer must configure this in Firebase)
+            GoogleSignin.configure({
+              webClientId: 'YOUR_WEB_CLIENT_ID.apps.googleusercontent.com',
+            });
+            
+            await GoogleSignin.hasPlayServices();
+            const userInfo = await GoogleSignin.signIn();
+            
+            // Supporting both newer and older versions of the SDK
+            actualToken = userInfo.data?.idToken || userInfo.idToken;
+            
+            if (!actualToken) {
+              throw new Error('Không nhận được ID Token từ Google');
+            }
+          } catch (nativeError: any) {
+            console.warn('Native Google Sign-In error:', nativeError.message);
+            throw new Error(`Lỗi đăng nhập Google: ${nativeError.message}`);
+          }
+        }
+        
+        const credential = GoogleAuthProvider.credential(actualToken);
         await signInWithCredential(auth, credential);
       }
     } catch (error) {

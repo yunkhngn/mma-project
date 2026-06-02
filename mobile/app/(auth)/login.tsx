@@ -44,7 +44,7 @@ export default function LoginScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     setLoadingGoogle(true);
     try {
-      await loginWithGoogle("MOCK_GOOGLE_ID_TOKEN");
+      await loginWithGoogle();
       router.replace('/(tabs)');
     } catch (err: any) {
       Alert.alert('Lỗi', err.message || 'Đăng nhập Google thất bại');
@@ -161,16 +161,19 @@ export default function LoginScreen() {
             </View>
           </TouchableOpacity>
 
-          <View style={styles.signupContainer}>
+          <TouchableOpacity 
+            onPress={handleSignUpPress} 
+            activeOpacity={0.8}
+            style={styles.signupContainer}
+            hitSlop={{ top: 12, bottom: 12, left: 24, right: 24 }}
+          >
             <Typography variant="body" style={styles.signupText}>
               Chưa có tài khoản?{' '}
-            </Typography>
-            <TouchableOpacity onPress={handleSignUpPress} activeOpacity={0.8}>
               <Typography variant="body" style={styles.signupLink}>
                 Đăng ký
               </Typography>
-            </TouchableOpacity>
-          </View>
+            </Typography>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </View>

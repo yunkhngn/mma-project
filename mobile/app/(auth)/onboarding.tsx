@@ -15,7 +15,7 @@ export default function OnboardingScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
     setLoadingGoogle(true);
     try {
-      await loginWithGoogle("MOCK_GOOGLE_ID_TOKEN");
+      await loginWithGoogle();
       router.replace('/(tabs)');
     } catch (error: any) {
       Alert.alert('Lỗi', error.message || 'Đăng nhập Google thất bại');
