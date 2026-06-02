@@ -86,8 +86,37 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const loginWithGoogle = async (idToken: string) => {
     setLoading(true);
     try {
-      const credential = GoogleAuthProvider.credential(idToken);
-      await signInWithCredential(auth, credential);
+      if (idToken === "MOCK_GOOGLE_ID_TOKEN") {
+        // Mock Google Login using a Firebase test account for seamless local development
+        const mockEmail = "google-mock-user@viettrip.com";
+        const mockPassword = "GoogleMockPassword123!";
+        try {
+          await signInWithEmailAndPassword(auth, mockEmail, mockPassword);
+        } catch (signInError: any) {
+          // Firebase v10/v11 may throw 'auth/invalid-credential' or 'auth/user-not-found'
+          if (
+            signInError.code === 'auth/user-not-found' || 
+            signInError.code === 'auth/invalid-credential' || 
+            String(signInError.message).includes('invalid-credential') ||
+            String(signInError.message).includes('user-not-found')
+          ) {
+            try {
+              const userCredential = await createUserWithEmailAndPassword(auth, mockEmail, mockPassword);
+              if (userCredential.user) {
+                await updateFirebaseProfile(userCredential.user, { displayName: "Google Mock User" });
+              }
+            } catch (createError) {
+              // If creation fails because user already exists (invalid-credential check was false positive), retry sign in
+              await signInWithEmailAndPassword(auth, mockEmail, mockPassword);
+            }
+          } else {
+            throw signInError;
+          }
+        }
+      } else {
+        const credential = GoogleAuthProvider.credential(idToken);
+        await signInWithCredential(auth, credential);
+      }
     } catch (error) {
       setLoading(false);
       throw error;
