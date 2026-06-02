@@ -51,7 +51,7 @@ export default function LoginScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
+    <View style={styles.container}>
       <ImageBackground
         source={{ uri: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=600&q=80' }}
         style={styles.heroImage}
@@ -59,118 +59,139 @@ export default function LoginScreen() {
         <View style={styles.overlay} />
       </ImageBackground>
 
-      <View style={styles.formContainer}>
-        <View style={styles.logoContainer}>
-          <Ionicons name="airplane" size={26} color="#1A1A1A" style={styles.logoIcon} />
-          <Typography variant="h1" style={styles.logoText}>
-            VietTrip
-          </Typography>
-        </View>
-        
-        <Typography variant="h1" style={styles.title}>
-          Chào mừng trở lại
-        </Typography>
-        <Typography variant="body" style={styles.subtitle}>
-          Đăng nhập để tiếp tục hành trình VietTrip của bạn.
-        </Typography>
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContainer} 
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={styles.spacer} />
 
-        <FormField
-          label="EMAIL HOẶC SỐ ĐIỆN THOẠI"
-          placeholder="nhap@email.com"
-          value={email}
-          onChangeText={setEmail}
-          error={errors.email}
-          autoCapitalize="none"
-          keyboardType="email-address"
-        />
-
-        <FormField
-          label="MẬT KHẨU"
-          placeholder="••••••••"
-          value={password}
-          onChangeText={setPassword}
-          error={errors.password}
-          secureTextEntry
-        />
-
-        <TouchableOpacity 
-          style={styles.forgotButton} 
-          onPress={() => Alert.alert('Thông báo', 'Tính năng đặt lại mật khẩu đang được phát triển')}
-          activeOpacity={0.8}
-        >
-          <Typography variant="caption" style={styles.forgotText}>
-            Quên mật khẩu?
-          </Typography>
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-          style={styles.loginButton} 
-          onPress={handleLogin}
-          disabled={loading}
-          activeOpacity={0.8}
-        >
-          <Typography style={styles.loginButtonText}>
-            {loading ? 'ĐANG XỬ LÝ...' : 'ĐĂNG NHẬP'}
-          </Typography>
-        </TouchableOpacity>
-
-        <View style={styles.dividerContainer}>
-          <View style={styles.dividerLine} />
-          <Typography variant="caption" style={styles.dividerText}>hoặc tiếp tục với</Typography>
-          <View style={styles.dividerLine} />
-        </View>
-
-        <TouchableOpacity 
-          style={styles.socialButton} 
-          onPress={handleGoogleSignIn} 
-          disabled={loadingGoogle}
-          activeOpacity={0.8}
-        >
-          <View style={styles.buttonContent}>
-            <Ionicons name="logo-google" size={20} color="#1A1A1A" style={styles.buttonIcon} />
-            <Typography style={styles.socialButtonText}>
-              Google
+        <View style={styles.formContainer}>
+          <View style={styles.logoContainer}>
+            <Ionicons name="airplane" size={26} color="#1A1A1A" style={styles.logoIcon} />
+            <Typography variant="h1" style={styles.logoText}>
+              VietTrip
             </Typography>
           </View>
-        </TouchableOpacity>
-
-        <View style={styles.signupContainer}>
-          <Typography variant="body" style={styles.signupText}>
-            Chưa có tài khoản?{' '}
+          
+          <Typography variant="h1" style={styles.title}>
+            Chào mừng trở lại
           </Typography>
-          <TouchableOpacity onPress={() => router.push('/(auth)/register')} activeOpacity={0.8}>
-            <Typography variant="body" style={styles.signupLink}>
-              Đăng ký
+          <Typography variant="body" style={styles.subtitle}>
+            Đăng nhập để tiếp tục hành trình VietTrip của bạn.
+          </Typography>
+
+          <FormField
+            label="EMAIL HOẶC SỐ ĐIỆN THOẠI"
+            placeholder="nhap@email.com"
+            value={email}
+            onChangeText={setEmail}
+            error={errors.email}
+            autoCapitalize="none"
+            keyboardType="email-address"
+          />
+
+          <FormField
+            label="MẬT KHẨU"
+            placeholder="••••••••"
+            value={password}
+            onChangeText={setPassword}
+            error={errors.password}
+            secureTextEntry
+          />
+
+          <TouchableOpacity 
+            style={styles.forgotButton} 
+            onPress={() => Alert.alert('Thông báo', 'Tính năng đặt lại mật khẩu đang được phát triển')}
+            activeOpacity={0.8}
+          >
+            <Typography variant="caption" style={styles.forgotText}>
+              Quên mật khẩu?
             </Typography>
           </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.loginButton} 
+            onPress={handleLogin}
+            disabled={loading}
+            activeOpacity={0.8}
+          >
+            <Typography style={styles.loginButtonText}>
+              {loading ? 'ĐANG XỬ LÝ...' : 'ĐĂNG NHẬP'}
+            </Typography>
+          </TouchableOpacity>
+
+          <View style={styles.dividerContainer}>
+            <View style={styles.dividerLine} />
+            <Typography variant="caption" style={styles.dividerText}>hoặc tiếp tục với</Typography>
+            <View style={styles.dividerLine} />
+          </View>
+
+          <TouchableOpacity 
+            style={styles.socialButton} 
+            onPress={handleGoogleSignIn} 
+            disabled={loadingGoogle}
+            activeOpacity={0.8}
+          >
+            <View style={styles.buttonContent}>
+              <Ionicons name="logo-google" size={20} color="#1A1A1A" style={styles.buttonIcon} />
+              <Typography style={styles.socialButtonText}>
+                Google
+              </Typography>
+            </View>
+          </TouchableOpacity>
+
+          <View style={styles.signupContainer}>
+            <Typography variant="body" style={styles.signupText}>
+              Chưa có tài khoản?{' '}
+            </Typography>
+            <TouchableOpacity onPress={() => router.push('/(auth)/register')} activeOpacity={0.8}>
+              <Typography variant="body" style={styles.signupLink}>
+                Đăng ký
+              </Typography>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollContainer: {
-    flexGrow: 1,
+  container: {
+    flex: 1,
     backgroundColor: '#FFFFFF',
   },
   heroImage: {
-    height: 200,
-    width: '100%',
+    ...StyleSheet.absoluteFillObject,
   },
   overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+  },
+  scrollView: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.15)',
+  },
+  scrollContainer: {
+    flexGrow: 1,
+  },
+  spacer: {
+    height: 160,
   },
   formContainer: {
     flex: 1,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    marginTop: -24,
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 24,
     paddingTop: 32,
     paddingBottom: 40,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -3 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 5,
   },
   logoContainer: {
     flexDirection: 'row',

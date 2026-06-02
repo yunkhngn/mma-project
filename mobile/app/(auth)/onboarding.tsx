@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ImageBackground, TouchableOpacity, Alert } from 'react-native';
+import { View, StyleSheet, ImageBackground, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Typography } from '@/components/atoms/Typography';
@@ -28,54 +28,65 @@ export default function OnboardingScreen() {
         source={{ uri: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=600&q=80' }}
         style={styles.heroImage}
       >
-        <View style={styles.overlay}>
-          <Typography variant="h1" color="#FFFFFF" style={styles.logo}>
-            VietTrip
-          </Typography>
-        </View>
+        <View style={styles.overlay} />
       </ImageBackground>
 
-      <View style={styles.bottomCard}>
-        <Typography variant="h1" style={styles.title}>
-          Khởi hành chuyến xe của bạn ngay hôm nay.
-        </Typography>
-        <Typography variant="body" style={styles.subtitle}>
-          Đặt vé xe khách cao cấp, khám phá các tuyến đường và di chuyển liền mạch.
-        </Typography>
-
-        <TouchableOpacity 
-          style={styles.primaryEmailButton}
-          onPress={() => router.push('/(auth)/login')}
-          activeOpacity={0.8}
-        >
-          <View style={styles.buttonContent}>
-            <Ionicons name="mail-outline" size={20} color="#FFFFFF" style={styles.buttonIcon} />
-            <Typography style={styles.primaryEmailButtonText}>
-              Tiếp tục với Email
-            </Typography>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-          style={styles.socialButton} 
-          onPress={handleGoogleSignIn} 
-          disabled={loadingGoogle}
-          activeOpacity={0.8}
-        >
-          <View style={styles.buttonContent}>
-            <Ionicons name="logo-google" size={20} color="#1A1A1A" style={styles.buttonIcon} />
-            <Typography style={styles.socialButtonText}>
-              Tiếp tục với Google
-            </Typography>
-          </View>
-        </TouchableOpacity>
-
-        <Typography variant="caption" style={styles.terms}>
-          Bằng việc chọn tiếp tục, bạn đồng ý với{' '}
-          <Typography variant="caption" style={styles.link}>Điều khoản Dịch vụ</Typography> và{' '}
-          <Typography variant="caption" style={styles.link}>Chính sách Bảo mật</Typography>.
+      <View style={styles.logoContainer}>
+        <Typography variant="h1" color="#FFFFFF" style={styles.logo}>
+          VietTrip
         </Typography>
       </View>
+
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContainer} 
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={styles.spacer} />
+        
+        <View style={styles.bottomCard}>
+          <Typography variant="h1" style={styles.title}>
+            Khởi hành chuyến xe của bạn ngay hôm nay.
+          </Typography>
+          <Typography variant="body" style={styles.subtitle}>
+            Đặt vé xe khách cao cấp, khám phá các tuyến đường và di chuyển liền mạch.
+          </Typography>
+
+          <TouchableOpacity 
+            style={styles.primaryEmailButton}
+            onPress={() => router.push('/(auth)/login')}
+            activeOpacity={0.8}
+          >
+            <View style={styles.buttonContent}>
+              <Ionicons name="mail-outline" size={20} color="#FFFFFF" style={styles.buttonIcon} />
+              <Typography style={styles.primaryEmailButtonText}>
+                Tiếp tục với Email
+              </Typography>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.socialButton} 
+            onPress={handleGoogleSignIn} 
+            disabled={loadingGoogle}
+            activeOpacity={0.8}
+          >
+            <View style={styles.buttonContent}>
+              <Ionicons name="logo-google" size={20} color="#1A1A1A" style={styles.buttonIcon} />
+              <Typography style={styles.socialButtonText}>
+                Tiếp tục với Google
+              </Typography>
+            </View>
+          </TouchableOpacity>
+
+          <Typography variant="caption" style={styles.terms}>
+            Bằng việc chọn tiếp tục, bạn đồng ý với{' '}
+            <Typography variant="caption" style={styles.link}>Điều khoản Dịch vụ</Typography> và{' '}
+            <Typography variant="caption" style={styles.link}>Chính sách Bảo mật</Typography>.
+          </Typography>
+        </View>
+      </ScrollView>
     </View>
   );
 }
@@ -86,19 +97,31 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   heroImage: {
-    flex: 1,
-    width: '100%',
+    ...StyleSheet.absoluteFillObject,
   },
   overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.25)',
-    paddingTop: 60,
-    paddingHorizontal: 24,
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+  },
+  logoContainer: {
+    position: 'absolute',
+    top: 60,
+    left: 24,
+    zIndex: 10,
   },
   logo: {
     fontSize: 32,
     fontWeight: '800',
     letterSpacing: 0.5,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContainer: {
+    flexGrow: 1,
+  },
+  spacer: {
+    height: 280,
   },
   bottomCard: {
     backgroundColor: '#FFFFFF',
@@ -107,7 +130,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingTop: 32,
     paddingBottom: 40,
-    marginTop: -24,
+    flex: 1,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -3 },
     shadowOpacity: 0.05,

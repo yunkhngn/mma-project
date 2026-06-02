@@ -65,7 +65,7 @@ export default function RegisterScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
+    <View style={styles.container}>
       <ImageBackground
         source={{ uri: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=600&q=80' }}
         style={styles.heroImage}
@@ -73,118 +73,139 @@ export default function RegisterScreen() {
         <View style={styles.overlay} />
       </ImageBackground>
 
-      <View style={styles.formContainer}>
-        <Typography variant="h1" style={styles.title}>
-          Tạo tài khoản
-        </Typography>
-        <Typography variant="body" style={styles.subtitle}>
-          Bắt đầu hành trình của bạn cùng VietTrip
-        </Typography>
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContainer} 
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={styles.spacer} />
 
-        <FormField
-          label="HỌ VÀ TÊN"
-          placeholder="Nhập họ và tên của bạn"
-          value={fullName}
-          onChangeText={setFullName}
-          error={errors.fullName}
-        />
-
-        <FormField
-          label="EMAIL HOẶC SỐ ĐIỆN THOẠI"
-          placeholder="nhap@email.com"
-          value={email}
-          onChangeText={setEmail}
-          error={errors.email}
-          autoCapitalize="none"
-          keyboardType="email-address"
-        />
-
-        <FormField
-          label="MẬT KHẨU"
-          placeholder="Tạo mật khẩu (ít nhất 8 ký tự)"
-          value={password}
-          onChangeText={setPassword}
-          error={errors.password}
-          secureTextEntry
-        />
-
-        <FormField
-          label="XÁC NHẬN MẬT KHẨU"
-          placeholder="Nhập lại mật khẩu"
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          error={errors.confirmPassword}
-          secureTextEntry
-        />
-
-        <TouchableOpacity 
-          style={styles.registerButton} 
-          onPress={handleRegister}
-          disabled={loading}
-          activeOpacity={0.8}
-        >
-          <Typography style={styles.registerButtonText}>
-            {loading ? 'ĐANG XỬ LÝ...' : 'ĐĂNG KÝ'}
+        <View style={styles.formContainer}>
+          <Typography variant="h1" style={styles.title}>
+            Tạo tài khoản
           </Typography>
-        </TouchableOpacity>
-
-        <View style={styles.dividerContainer}>
-          <View style={styles.dividerLine} />
-          <Typography variant="caption" style={styles.dividerText}>hoặc tiếp tục với</Typography>
-          <View style={styles.dividerLine} />
-        </View>
-
-        <TouchableOpacity 
-          style={styles.socialButton} 
-          onPress={handleGoogleSignIn} 
-          disabled={loadingGoogle}
-          activeOpacity={0.8}
-        >
-          <View style={styles.buttonContent}>
-            <Ionicons name="logo-google" size={20} color="#1A1A1A" style={styles.buttonIcon} />
-            <Typography style={styles.socialButtonText}>
-              Google
-            </Typography>
-          </View>
-        </TouchableOpacity>
-
-        <View style={styles.signinContainer}>
-          <Typography variant="body" style={styles.signinText}>
-            Đã có tài khoản?{' '}
+          <Typography variant="body" style={styles.subtitle}>
+            Bắt đầu hành trình của bạn cùng VietTrip
           </Typography>
-          <TouchableOpacity onPress={() => router.push('/(auth)/login')} activeOpacity={0.8}>
-            <Typography variant="body" style={styles.signinLink}>
-              Đăng nhập
+
+          <FormField
+            label="HỌ VÀ TÊN"
+            placeholder="Nhập họ và tên của bạn"
+            value={fullName}
+            onChangeText={setFullName}
+            error={errors.fullName}
+          />
+
+          <FormField
+            label="EMAIL HOẶC SỐ ĐIỆN THOẠI"
+            placeholder="nhap@email.com"
+            value={email}
+            onChangeText={setEmail}
+            error={errors.email}
+            autoCapitalize="none"
+            keyboardType="email-address"
+          />
+
+          <FormField
+            label="MẬT KHẨU"
+            placeholder="Tạo mật khẩu (ít nhất 8 ký tự)"
+            value={password}
+            onChangeText={setPassword}
+            error={errors.password}
+            secureTextEntry
+          />
+
+          <FormField
+            label="XÁC NHẬN MẬT KHẨU"
+            placeholder="Nhập lại mật khẩu"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            error={errors.confirmPassword}
+            secureTextEntry
+          />
+
+          <TouchableOpacity 
+            style={styles.registerButton} 
+            onPress={handleRegister}
+            disabled={loading}
+            activeOpacity={0.8}
+          >
+            <Typography style={styles.registerButtonText}>
+              {loading ? 'ĐANG XỬ LÝ...' : 'ĐĂNG KÝ'}
             </Typography>
           </TouchableOpacity>
+
+          <View style={styles.dividerContainer}>
+            <View style={styles.dividerLine} />
+            <Typography variant="caption" style={styles.dividerText}>hoặc tiếp tục với</Typography>
+            <View style={styles.dividerLine} />
+          </View>
+
+          <TouchableOpacity 
+            style={styles.socialButton} 
+            onPress={handleGoogleSignIn} 
+            disabled={loadingGoogle}
+            activeOpacity={0.8}
+          >
+            <View style={styles.buttonContent}>
+              <Ionicons name="logo-google" size={20} color="#1A1A1A" style={styles.buttonIcon} />
+              <Typography style={styles.socialButtonText}>
+                Google
+              </Typography>
+            </View>
+          </TouchableOpacity>
+
+          <View style={styles.signinContainer}>
+            <Typography variant="body" style={styles.signinText}>
+              Đã có tài khoản?{' '}
+            </Typography>
+            <TouchableOpacity onPress={() => router.push('/(auth)/login')} activeOpacity={0.8}>
+              <Typography variant="body" style={styles.signinLink}>
+                Đăng nhập
+              </Typography>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollContainer: {
-    flexGrow: 1,
+  container: {
+    flex: 1,
     backgroundColor: '#FFFFFF',
   },
   heroImage: {
-    height: 160,
-    width: '100%',
+    ...StyleSheet.absoluteFillObject,
   },
   overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+  },
+  scrollView: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.15)',
+  },
+  scrollContainer: {
+    flexGrow: 1,
+  },
+  spacer: {
+    height: 120,
   },
   formContainer: {
     flex: 1,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    marginTop: -24,
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 24,
     paddingTop: 32,
     paddingBottom: 40,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -3 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 5,
   },
   title: {
     fontSize: 22,
