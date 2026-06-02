@@ -49,8 +49,14 @@ export default function OnboardingScreen() {
         contentContainerStyle={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
+        bounces={true}
+        overScrollMode="never"
       >
-        <View style={styles.spacer} />
+        <TouchableOpacity 
+          style={styles.topSpacer} 
+          activeOpacity={1} 
+          onPress={() => {}}
+        />
 
         <View style={styles.bottomCard}>
           <Typography variant="h1" style={styles.title}>
@@ -126,9 +132,11 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flexGrow: 1,
+    justifyContent: 'flex-end',
   },
-  spacer: {
-    height: 500,
+  topSpacer: {
+    flex: 1,
+    minHeight: 250,
   },
   bottomCard: {
     backgroundColor: '#FFFFFF',
@@ -137,7 +145,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingTop: 32,
     paddingBottom: 40,
-    flex: 1,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -3 },
     shadowOpacity: 0.05,

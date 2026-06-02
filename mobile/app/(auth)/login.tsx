@@ -77,8 +77,14 @@ export default function LoginScreen() {
         contentContainerStyle={styles.scrollContainer} 
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
+        bounces={true}
+        overScrollMode="never"
       >
-        <View style={styles.spacer} />
+        <TouchableOpacity 
+          style={styles.topSpacer} 
+          activeOpacity={1} 
+          onPress={() => {}}
+        />
 
         <View style={styles.formContainer}>
           <View style={styles.logoContainer}>
@@ -188,12 +194,13 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flexGrow: 1,
+    justifyContent: 'flex-end',
   },
-  spacer: {
-    height: 160,
+  topSpacer: {
+    flex: 1,
+    minHeight: 120,
   },
   formContainer: {
-    flex: 1,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     backgroundColor: '#FFFFFF',

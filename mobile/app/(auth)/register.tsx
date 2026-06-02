@@ -86,8 +86,14 @@ export default function RegisterScreen() {
         contentContainerStyle={styles.scrollContainer} 
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
+        bounces={true}
+        overScrollMode="never"
       >
-        <View style={styles.spacer} />
+        <TouchableOpacity 
+          style={styles.topSpacer} 
+          activeOpacity={1} 
+          onPress={() => {}}
+        />
 
         <View style={styles.formContainer}>
           <Typography variant="h1" style={styles.title}>
@@ -197,12 +203,13 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flexGrow: 1,
+    justifyContent: 'flex-end',
   },
-  spacer: {
-    height: 120,
+  topSpacer: {
+    flex: 1,
+    minHeight: 80,
   },
   formContainer: {
-    flex: 1,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     backgroundColor: '#FFFFFF',
