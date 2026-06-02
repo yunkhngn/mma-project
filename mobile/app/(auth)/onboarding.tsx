@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   spacer: {
-    height: 280,
+    height: 380,
   },
   bottomCard: {
     backgroundColor: '#FFFFFF',
