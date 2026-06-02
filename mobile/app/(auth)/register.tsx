@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity, Alert, ImageBackground } from 'react-native';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { Typography } from '@/components/atoms/Typography';
 import { FormField } from '@/components/molecules/FormField';
-import { Button } from '@/components/atoms/Button';
 import { useAuth } from '@/context/AuthContext';
 
 export default function RegisterScreen() {
@@ -42,7 +42,6 @@ export default function RegisterScreen() {
     setErrors({});
     setLoading(true);
     try {
-      // Register with email, pass blank phone for now
       await registerWithEmail(email.trim(), password, fullName.trim(), '');
       Alert.alert('Thành công', 'Tạo tài khoản thành công!');
       router.replace('/(tabs)');
@@ -118,8 +117,8 @@ export default function RegisterScreen() {
           secureTextEntry
         />
 
-        <TouchableOpacity
-          style={styles.registerButton}
+        <TouchableOpacity 
+          style={styles.registerButton} 
           onPress={handleRegister}
           disabled={loading}
           activeOpacity={0.8}
@@ -135,15 +134,18 @@ export default function RegisterScreen() {
           <View style={styles.dividerLine} />
         </View>
 
-        <TouchableOpacity
-          style={styles.socialButton}
-          onPress={handleGoogleSignIn}
+        <TouchableOpacity 
+          style={styles.socialButton} 
+          onPress={handleGoogleSignIn} 
           disabled={loadingGoogle}
           activeOpacity={0.8}
         >
-          <Typography style={styles.socialButtonText}>
-            G Google
-          </Typography>
+          <View style={styles.buttonContent}>
+            <Ionicons name="logo-google" size={20} color="#1A1A1A" style={styles.buttonIcon} />
+            <Typography style={styles.socialButtonText}>
+              Google
+            </Typography>
+          </View>
         </TouchableOpacity>
 
         <View style={styles.signinContainer}>
@@ -238,6 +240,13 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#1A1A1A',
     fontSize: 15,
+  },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  buttonIcon: {
+    marginRight: 8,
   },
   signinContainer: {
     flexDirection: 'row',

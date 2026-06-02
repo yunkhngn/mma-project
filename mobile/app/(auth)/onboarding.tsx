@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ImageBackground, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { Typography } from '@/components/atoms/Typography';
-import { Button } from '@/components/atoms/Button';
 import { useAuth } from '@/context/AuthContext';
 
 export default function OnboardingScreen() {
@@ -13,12 +13,10 @@ export default function OnboardingScreen() {
   const handleGoogleSignIn = async () => {
     setLoadingGoogle(true);
     try {
-      // Sign-in with Google OAuth mock token
-      // Under the hood, this triggers Firebase Auth credential sign-in and backend synchronization.
       await loginWithGoogle("MOCK_GOOGLE_ID_TOKEN");
       router.replace('/(tabs)');
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'Google Sign-In failed');
+      Alert.alert('Lỗi', error.message || 'Đăng nhập Google thất bại');
     } finally {
       setLoadingGoogle(false);
     }
@@ -32,7 +30,7 @@ export default function OnboardingScreen() {
       >
         <View style={styles.overlay}>
           <Typography variant="h1" color="#FFFFFF" style={styles.logo}>
-            Nomad
+            VietTrip
           </Typography>
         </View>
       </ImageBackground>
@@ -50,19 +48,12 @@ export default function OnboardingScreen() {
           onPress={() => router.push('/(auth)/login')}
           activeOpacity={0.8}
         >
-          <Typography style={styles.primaryEmailButtonText}>
-            ✉ Tiếp tục với Email
-          </Typography>
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-          style={styles.socialButton} 
-          onPress={() => Alert.alert('Information', 'Apple Sign-In is mocked for this platform')}
-          activeOpacity={0.8}
-        >
-          <Typography style={styles.socialButtonText}>
-             Tiếp tục với Apple
-          </Typography>
+          <View style={styles.buttonContent}>
+            <Ionicons name="mail-outline" size={20} color="#FFFFFF" style={styles.buttonIcon} />
+            <Typography style={styles.primaryEmailButtonText}>
+              Tiếp tục với Email
+            </Typography>
+          </View>
         </TouchableOpacity>
 
         <TouchableOpacity 
@@ -71,9 +62,12 @@ export default function OnboardingScreen() {
           disabled={loadingGoogle}
           activeOpacity={0.8}
         >
-          <Typography style={styles.socialButtonText}>
-            G Tiếp tục với Google
-          </Typography>
+          <View style={styles.buttonContent}>
+            <Ionicons name="logo-google" size={20} color="#1A1A1A" style={styles.buttonIcon} />
+            <Typography style={styles.socialButtonText}>
+              Tiếp tục với Google
+            </Typography>
+          </View>
         </TouchableOpacity>
 
         <Typography variant="caption" style={styles.terms}>
@@ -162,6 +156,13 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#1A1A1A',
     fontSize: 15,
+  },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  buttonIcon: {
+    marginRight: 8,
   },
   terms: {
     textAlign: 'center',

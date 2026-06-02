@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity, Alert, ImageBackground } from 'react-native';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { Typography } from '@/components/atoms/Typography';
 import { FormField } from '@/components/molecules/FormField';
-import { Button } from '@/components/atoms/Button';
 import { useAuth } from '@/context/AuthContext';
 
 export default function LoginScreen() {
@@ -18,8 +18,8 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     const tempErrors: typeof errors = {};
-    if (!email.trim()) tempErrors.email = 'Email or phone number is required';
-    if (!password) tempErrors.password = 'Password is required';
+    if (!email.trim()) tempErrors.email = 'Email hoặc số điện thoại là bắt buộc';
+    if (!password) tempErrors.password = 'Mật khẩu là bắt buộc';
     
     if (Object.keys(tempErrors).length > 0) {
       setErrors(tempErrors);
@@ -60,9 +60,13 @@ export default function LoginScreen() {
       </ImageBackground>
 
       <View style={styles.formContainer}>
-        <Typography variant="h1" style={styles.logo}>
-          ✈ VietTrip
-        </Typography>
+        <View style={styles.logoContainer}>
+          <Ionicons name="airplane" size={26} color="#1A1A1A" style={styles.logoIcon} />
+          <Typography variant="h1" style={styles.logoText}>
+            VietTrip
+          </Typography>
+        </View>
+        
         <Typography variant="h1" style={styles.title}>
           Chào mừng trở lại
         </Typography>
@@ -122,9 +126,12 @@ export default function LoginScreen() {
           disabled={loadingGoogle}
           activeOpacity={0.8}
         >
-          <Typography style={styles.socialButtonText}>
-            G Google
-          </Typography>
+          <View style={styles.buttonContent}>
+            <Ionicons name="logo-google" size={20} color="#1A1A1A" style={styles.buttonIcon} />
+            <Typography style={styles.socialButtonText}>
+              Google
+            </Typography>
+          </View>
         </TouchableOpacity>
 
         <View style={styles.signupContainer}>
@@ -165,11 +172,19 @@ const styles = StyleSheet.create({
     paddingTop: 32,
     paddingBottom: 40,
   },
-  logo: {
+  logoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  logoIcon: {
+    marginRight: 6,
+  },
+  logoText: {
     fontSize: 26,
     fontWeight: '800',
     color: '#1A1A1A',
-    marginBottom: 8,
+    marginBottom: 0,
   },
   title: {
     fontSize: 22,
@@ -233,6 +248,13 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#1A1A1A',
     fontSize: 15,
+  },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  buttonIcon: {
+    marginRight: 8,
   },
   signupContainer: {
     flexDirection: 'row',
