@@ -25,6 +25,11 @@ export interface Vehicle {
   seatLayout: unknown;
 }
 
+export interface VehicleType {
+  id: number;
+  name: string;
+}
+
 export interface Trip {
   id: number;
   routeId: number;
@@ -75,11 +80,16 @@ export interface Payment {
 export interface RevenueReport {
   totalRevenue: number;
   totalTicketsSold: number;
-  byRoute: Array<{
+  breakdownByRoute: Array<{
     routeId: number;
     origin: string;
     destination: string;
     revenue: number;
     ticketsSold: number;
+  }>;
+  breakdownByDate: Array<{
+    date: string;
+    ticketsSold: number;
+    revenue: number;
   }>;
 }
