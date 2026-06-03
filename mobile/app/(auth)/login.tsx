@@ -1,0 +1,338 @@
+import React, { useState } from 'react';
+import { View, StyleSheet, ScrollView, TouchableOpacity, ImageBackground } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
+import { Typography } from '@/components/atoms/Typography';
+import { FormField } from '@/components/molecules/FormField';
+import { useAuth } from '@/context/AuthContext';
+import { useToast } from '@/context/ToastContext';
+import { getFriendlyErrorMessage } from '@/utils/errorHelpers';
+
+export default function LoginScreen() {
+  const router = useRouter();
+  const { loginWithEmail, loginWithGoogle } = useAuth();
+  const { showToast } = useToast();
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [loadingGoogle, setLoadingGoogle] = useState(false);
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+
+  const handleLogin = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
+    const tempErrors: typeof errors = {};
+    if (!email.trim()) tempErrors.email = 'Email hoặc số điện thoại là bắt buộc';
+    if (!password) tempErrors.password = 'Mật khẩu là bắt buộc';
+
+    if (Object.keys(tempErrors).length > 0) {
+      setErrors(tempErrors);
+      showToast({
+        message: 'Vui lòng điền đầy đủ các thông tin đăng nhập.',
+        type: 'error',
+      });
+      return;
+    }
+
+    setErrors({});
+    setLoading(true);
+    try {
+      await loginWithEmail(email.trim(), password);
+      showToast({
+        message: 'Đăng nhập thành công!',
+        type: 'success',
+      });
+      router.replace('/(tabs)');
+    } catch (err: any) {
+      showToast({
+        message: getFriendlyErrorMessage(err),
+        type: 'error',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
+    setLoadingGoogle(true);
+    try {
+      await loginWithGoogle();
+      showToast({
+        message: 'Đăng nhập Google thành công!',
+        type: 'success',
+      });
+      router.replace('/(tabs)');
+    } catch (err: any) {
+      showToast({
+        message: getFriendlyErrorMessage(err),
+        type: 'error',
+      });
+    } finally {
+      setLoadingGoogle(false);
+    }
+  };
+
+  const handleForgotPress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
+    showToast({
+      message: 'Tính năng đặt lại mật khẩu đang được phát triển',
+      type: 'info',
+    });
+  };
+
+  const handleSignUpPress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
+    router.push('/(auth)/register');
+  };
+
+  return (
+    <View style={styles.container}>
+      <ImageBackground
+        source={{ uri: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=600&q=80' }}
+        style={styles.heroImage}
+      >
+        <View style={styles.overlay} />
+      </ImageBackground>
+
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContainer}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        bounces={true}
+        overScrollMode="never"
+      >
+        <TouchableOpacity
+          style={styles.topSpacer}
+          activeOpacity={1}
+          onPress={() => { }}
+        />
+
+        <View style={styles.formContainer}>
+          <View style={styles.logoContainer}>
+            <Ionicons name="airplane" size={26} color="#1A1A1A" style={styles.logoIcon} />
+            <Typography variant="h1" style={styles.logoText}>
+              VietTrip
+            </Typography>
+          </View>
+
+          <Typography variant="h1" style={styles.title}>
+            Chào mừng trở lại
+          </Typography>
+          <Typography variant="body" style={styles.subtitle}>
+            Đăng nhập để tiếp tục hành trình VietTrip của bạn.
+          </Typography>
+
+          <FormField
+            label="EMAIL HOẶC SỐ ĐIỆN THOẠI"
+            placeholder="nhap@email.com"
+            value={email}
+            onChangeText={setEmail}
+            error={errors.email}
+            autoCapitalize="none"
+            keyboardType="email-address"
+          />
+
+          <FormField
+            label="MẬT KHẨU"
+            placeholder="••••••••"
+            value={password}
+            onChangeText={setPassword}
+            error={errors.password}
+            secureTextEntry
+          />
+
+          <TouchableOpacity
+            style={styles.forgotButton}
+            onPress={handleForgotPress}
+            activeOpacity={0.8}
+          >
+            <Typography variant="caption" style={styles.forgotText}>
+              Quên mật khẩu?
+            </Typography>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.loginButton}
+            onPress={handleLogin}
+            disabled={loading}
+            activeOpacity={0.8}
+          >
+            <Typography style={styles.loginButtonText}>
+              {loading ? 'ĐANG XỬ LÝ...' : 'ĐĂNG NHẬP'}
+            </Typography>
+          </TouchableOpacity>
+
+          <View style={styles.dividerContainer}>
+            <View style={styles.dividerLine} />
+            <Typography variant="caption" style={styles.dividerText}>hoặc tiếp tục với</Typography>
+            <View style={styles.dividerLine} />
+          </View>
+
+          <TouchableOpacity
+            style={styles.socialButton}
+            onPress={handleGoogleSignIn}
+            disabled={loadingGoogle}
+            activeOpacity={0.8}
+          >
+            <View style={styles.buttonContent}>
+              <Ionicons name="logo-google" size={20} color="#1A1A1A" style={styles.buttonIcon} />
+              <Typography style={styles.socialButtonText}>
+                Google
+              </Typography>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={handleSignUpPress}
+            activeOpacity={0.8}
+            style={styles.signupContainer}
+            hitSlop={{ top: 15, bottom: 15, left: 30, right: 30 }}
+          >
+            <Typography variant="body" style={styles.signupText}>
+              Chưa có tài khoản?{' '}
+            </Typography>
+            <Typography variant="body" style={styles.signupLink}>
+              Đăng ký
+            </Typography>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
+  heroImage: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContainer: {
+    flexGrow: 1,
+  },
+  topSpacer: {
+    flex: 1,
+    minHeight: 120,
+  },
+  formContainer: {
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 24,
+    paddingTop: 32,
+    paddingBottom: 40,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -3 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+  logoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  logoIcon: {
+    marginRight: 6,
+  },
+  logoText: {
+    fontSize: 26,
+    fontWeight: '800',
+    color: '#1A1A1A',
+    marginBottom: 0,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: '700',
+    marginBottom: 4,
+    color: '#1A1A1A',
+  },
+  subtitle: {
+    color: '#666666',
+    fontSize: 14,
+    marginBottom: 24,
+  },
+  forgotButton: {
+    alignSelf: 'flex-end',
+    marginVertical: 8,
+  },
+  forgotText: {
+    color: '#666666',
+    fontWeight: '600',
+  },
+  loginButton: {
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#1A1A1A',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 12,
+  },
+  loginButtonText: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+    fontSize: 15,
+    letterSpacing: 0.5,
+  },
+  dividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#E5E5EA',
+  },
+  dividerText: {
+    marginHorizontal: 12,
+    color: '#8E8E93',
+    fontWeight: '500',
+  },
+  socialButton: {
+    height: 48,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: '#D1D1D6',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 24,
+    backgroundColor: '#FFFFFF',
+  },
+  socialButtonText: {
+    fontWeight: '600',
+    color: '#1A1A1A',
+    fontSize: 15,
+  },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  buttonIcon: {
+    marginRight: 8,
+  },
+  signupContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  signupText: {
+    color: '#666666',
+  },
+  signupLink: {
+    color: '#1A1A1A',
+    fontWeight: '700',
+  },
+});
