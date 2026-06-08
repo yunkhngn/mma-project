@@ -1,23 +1,24 @@
-// Placeholder for Firebase initialization
-// In the future, import firebase/app and firebase/auth here.
+import { initializeApp, getApps, getApp } from 'firebase/app';
+// @ts-ignore
+import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const firebaseConfig = {
-  apiKey: "MOCK_API_KEY",
-  authDomain: "mma-project-35d07.firebaseapp.com",
-  projectId: "mma-project-35d07",
-  storageBucket: "mma-project-35d07.firebasestorage.app",
-  messagingSenderId: "624050076746",
-  appId: "1:624050076746:web:example"
+const firebaseConfig = {
+  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY || "YOUR_API_KEY",
+  authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN || "YOUR_AUTH_DOMAIN",
+  projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID || "YOUR_PROJECT_ID",
+  storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET || "YOUR_STORAGE_BUCKET",
+  messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "YOUR_MESSAGING_SENDER_ID",
+  appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID || "YOUR_APP_ID",
 };
 
-export const auth = {
-  currentUser: null as { getIdToken: () => Promise<string> } | null,
-};
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
-export const db = null as any;
+const auth = initializeAuth(app, {
+  persistence: getReactNativePersistence(AsyncStorage),
+});
 
-export const initializeFirebase = () => {
-  console.log("Firebase initialized with configuration.");
-};
+const db = getFirestore(app);
 
-
+export { app, auth, db };
